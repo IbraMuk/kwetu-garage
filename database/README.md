@@ -4,9 +4,39 @@ Ce dossier contient les scripts SQL pour la création et l'initialisation de la 
 
 ## 📁 Fichiers
 
-- **`schema.sql`** - Schéma complet de la base de données avec tables, contraintes, indexes, triggers et vues
-- **`seed.sql`** - Données de démonstration pour tester l'application
-- **`README.md`** - Documentation (ce fichier)
+- **`schema.sql`** — Schéma complet (tables, index, triggers, fonctions, vues)
+- **`seed.sql`** — Données de démonstration (comptes bcrypt valides pour `password123`)
+- **`00-create-database.sql`** — Création seule de la base (à lancer sur la base `postgres`)
+- **`install-kwetu-garage.ps1`** — Installation automatisée sous **Windows (PowerShell)**
+- **`install-kwetu-garage.sh`** — Installation sous Linux / macOS / Git Bash
+- **`install.bat`** — Alternative batch Windows (depuis ce dossier)
+- **`setup.sql`** — Rappel des commandes (pas de `CREATE DATABASE` dans un `DO $$`)
+
+## 🚀 Installation rapide (Windows)
+
+Dans PowerShell, depuis le dossier `database` :
+
+```powershell
+$env:PGPASSWORD = "mot_de_passe_du_role_postgres"
+.\install-kwetu-garage.ps1
+```
+
+Pour **tout reprendre à zéro** (efface toutes les tables de la base) :
+
+```powershell
+.\install-kwetu-garage.ps1 -Recreate
+```
+
+Puis dans **`backend/.env`** : `DB_NAME=kwetu_garage` (et identifiants PostgreSQL corrects).
+
+### Installation manuelle (psql)
+
+1. Créer la base (connecté en `postgres`) : `psql -U postgres -d postgres -f 00-create-database.sql`  
+   ou : `CREATE DATABASE kwetu_garage ENCODING 'UTF8' TEMPLATE template0;`
+2. Schéma : `psql -U postgres -d kwetu_garage -v ON_ERROR_STOP=1 -f schema.sql`
+3. Données démo : `psql -U postgres -d kwetu_garage -v ON_ERROR_STOP=1 -f seed.sql`
+
+**Prérequis :** PostgreSQL 12+, extension `uuid-ossp` (créée par `schema.sql`).
 
 ## 🏗️ Architecture de la base de données
 
@@ -39,36 +69,12 @@ Ce dossier contient les scripts SQL pour la création et l'initialisation de la 
 - **`invoice_details`** - Informations détaillées des factures
 - **`low_stock_parts`** - Pièces avec stock faible
 
-## 🚀 Installation
-
-### Prérequis
-
-- PostgreSQL 12 ou supérieur
-- Extension `uuid-ossp` activée
-
-### Étapes
-
-1. **Créer la base de données**
-   ```sql
-   CREATE DATABASE kwetu_garage;
-   \c kwetu_garage;
-   ```
-
-2. **Exécuter le schéma**
-   ```bash
-   psql -d kwetu_garage -f schema.sql
-   ```
-
-3. **Insérer les données de démonstration**
-   ```bash
-   psql -d kwetu_garage -f seed.sql
-   ```
-
 ## 👤 Utilisateurs de démo
 
 | Email | Rôle | Mot de passe |
 |-------|------|-------------|
 | admin@kwetugarage.com | admin | password123 |
+| manager@kwetugarage.com | manager | password123 |
 | mechanic1@kwetugarage.com | mécanicien | password123 |
 | mechanic2@kwetugarage.com | mécanicien | password123 |
 | receptionist@kwetugarage.com | réceptionniste | password123 |

@@ -10,8 +10,8 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "Kwetu Garage - Gestion de Garage",
-  description: "Application de gestion complète pour votre garage",
+  title: "Kwetu Garage - Garage Automobile Professionnel à Kinshasa",
+  description: "Garage automobile professionnel à Kinshasa. Entretien, réparation, carrosserie, électricité auto et vente de pièces pour toutes marques.",
 };
 
 export default function RootLayout({

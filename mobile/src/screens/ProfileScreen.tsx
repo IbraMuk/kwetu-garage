@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -11,8 +11,8 @@ import {
 } from "react-native";
 import ScreenHeader from "../components/ScreenHeader";
 import ScreenLayout from "../components/ScreenLayout";
-import { authService } from "../services/authService";
-import { storageService, UserInfo } from "../services/storageService";
+import { useAuth } from "../contexts/AuthContext";
+import { useUserMenu } from "../hooks/useUserMenu";
 import { colors, commonStyles, spacing } from "../theme";
 
 const roleLabels: Record<string, string> = {
@@ -29,48 +29,63 @@ const roleIcons: Record<string, keyof typeof Ionicons.glyphMap> = {
   receptionist: "call",
 };
 
-export default function ProfileScreen({ navigation }: any) {
-  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
-  const [loading, setLoading] = useState(true);
+export default function ProfileScreen() {
+  const { user: userInfo, isDemo } = useAuth();
+  const { confirmLogout } = useUserMenu();
+  const loading = !userInfo;
 
-  useEffect(() => {
-    loadUserInfo();
-  }, []);
-
-  const loadUserInfo = async () => {
-    try {
-      setUserInfo(await storageService.getUserInfo());
-    } catch (error) {
-      console.error("Error loading user info:", error);
-    } finally {
-      setLoading(false);
-    }
+  const showInfo = (title: string, message: string) => {
+    Alert.alert(title, message);
   };
 
-  const handleLogout = () => {
-    Alert.alert("Déconnexion", "Êtes-vous sûr de vouloir vous déconnecter ?", [
-      { text: "Annuler", style: "cancel" },
-      {
-        text: "Se déconnecter",
-        style: "destructive",
-        onPress: async () => {
-          try {
-            await authService.logout();
-          } finally {
-            await storageService.clearAuth();
-            navigation.reset({ index: 0, routes: [{ name: "Login" }] });
-          }
-        },
-      },
-    ]);
-  };
-
-  const options: { icon: keyof typeof Ionicons.glyphMap; label: string }[] = [
-    { icon: "person-outline", label: "Modifier le profil" },
-    { icon: "settings-outline", label: "Paramètres" },
-    { icon: "notifications-outline", label: "Notifications" },
-    { icon: "help-circle-outline", label: "Aide et support" },
-    { icon: "information-circle-outline", label: "À propos" },
+  const options: {
+    icon: keyof typeof Ionicons.glyphMap;
+    label: string;
+    onPress: () => void;
+  }[] = [
+    {
+      icon: "person-outline",
+      label: "Modifier le profil",
+      onPress: () =>
+        showInfo(
+          "Profil",
+          isDemo
+            ? "En mode démo, connectez-vous avec un compte réel pour modifier le profil sur le serveur."
+            : "La modification du profil depuis le mobile sera disponible dans une prochaine version. Utilisez la version web en attendant.",
+        ),
+    },
+    {
+      icon: "settings-outline",
+      label: "Paramètres",
+      onPress: () =>
+        showInfo(
+          "Paramètres",
+          "Configurez EXPO_PUBLIC_API_URL dans mobile/.env pour pointer vers votre API (ex. http://192.168.x.x:3001/api sur téléphone).",
+        ),
+    },
+    {
+      icon: "notifications-outline",
+      label: "Notifications",
+      onPress: () => showInfo("Notifications", "Les notifications push seront activées prochainement."),
+    },
+    {
+      icon: "help-circle-outline",
+      label: "Aide et support",
+      onPress: () =>
+        showInfo(
+          "Aide",
+          "Connexion API : admin@kwetugarage.com / password123\nMode démo : données locales sans serveur.",
+        ),
+    },
+    {
+      icon: "information-circle-outline",
+      label: "À propos",
+      onPress: () =>
+        showInfo(
+          "Kwetu Garage",
+          "Application mobile de gestion d'atelier — clients, véhicules, réparations et tableau de bord.",
+        ),
+    },
   ];
 
   if (loading) {
@@ -107,12 +122,17 @@ export default function ProfileScreen({ navigation }: any) {
             <Text style={styles.role}>{roleLabels[role] ?? role}</Text>
           </View>
           <Text style={styles.email}>{userInfo?.email}</Text>
+          {isDemo ? (
+            <View style={styles.demoBadge}>
+              <Text style={styles.demoBadgeText}>Mode démo — données locales</Text>
+            </View>
+          ) : null}
         </View>
 
         <View style={commonStyles.glassCard}>
           {options.map((opt, i) => (
             <View key={opt.label}>
-              <TouchableOpacity style={styles.option} activeOpacity={0.7}>
+              <TouchableOpacity style={styles.option} activeOpacity={0.7} onPress={opt.onPress}>
                 <View style={styles.optionLeft}>
                   <Ionicons name={opt.icon} size={22} color={colors.textMuted} />
                   <Text style={styles.optionText}>{opt.label}</Text>
@@ -124,7 +144,7 @@ export default function ProfileScreen({ navigation }: any) {
           ))}
         </View>
 
-        <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout} activeOpacity={0.85}>
+        <TouchableOpacity style={styles.logoutBtn} onPress={confirmLogout} activeOpacity={0.85}>
           <Ionicons name="log-out-outline" size={22} color={colors.error} />
           <Text style={styles.logoutText}>Se déconnecter</Text>
         </TouchableOpacity>
@@ -152,6 +172,16 @@ const styles = StyleSheet.create({
   roleRow: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: spacing.sm },
   role: { fontSize: 14, color: colors.primaryLight, fontWeight: "600" },
   email: { fontSize: 14, color: colors.textMuted, marginTop: spacing.xs },
+  demoBadge: {
+    marginTop: spacing.sm,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    backgroundColor: "rgba(245, 158, 11, 0.15)",
+    borderWidth: 1,
+    borderColor: "rgba(245, 158, 11, 0.35)",
+  },
+  demoBadgeText: { fontSize: 12, color: colors.warning, fontWeight: "600" },
   option: {
     flexDirection: "row",
     alignItems: "center",

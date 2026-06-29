@@ -20,6 +20,7 @@ router.post(
       .optional()
       .isIn(["pending", "in_progress", "completed", "cancelled"]),
     body("start_date").optional().isISO8601(),
+    body("total_cost").optional().isFloat({ min: 0 }),
   ],
   async (req, res) => {
     try {

@@ -1,36 +1,23 @@
 -- ========================================
--- Script d'installation automatique
--- Base de données Kwetu Garage
+-- Kwetu Garage — fichier d’aide (pas d’exécution automatique de CREATE DATABASE)
 -- ========================================
+--
+-- PostgreSQL n’autorise pas CREATE DATABASE dans un bloc DO / transaction.
+-- Utilisez plutôt :
+--
+--   Windows (PowerShell, depuis ce dossier « database ») :
+--     $env:PGPASSWORD = "votre_mot_de_passe"
+--     .\install-kwetu-garage.ps1
+--
+--   Ou manuellement :
+--     psql -U postgres -d postgres -f 00-create-database.sql
+--     psql -U postgres -d kwetu_garage -f schema.sql
+--     psql -U postgres -d kwetu_garage -f seed.sql
+--
+--   Linux / macOS :
+--     chmod +x install-kwetu-garage.sh
+--     export PGPASSWORD=...
+--     ./install-kwetu-garage.sh
+--
 
--- Création de la base de données si elle n'existe pas
-DO $$
-BEGIN
-    IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'kwetu_garage') THEN
-        CREATE DATABASE kwetu_garage;
-        RAISE NOTICE 'Base de données kwetu_garage créée';
-    ELSE
-        RAISE NOTICE 'Base de données kwetu_garage existe déjà';
-    END IF;
-END
-$$;
-
--- Connexion à la base de données (à exécuter manuellement ou via psql)
--- \c kwetu_garage;
-
--- Vérification de l'extension uuid-ossp
-DO $$
-BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'uuid-ossp') THEN
-        CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-        RAISE NOTICE 'Extension uuid-ossp créée';
-    ELSE
-        RAISE NOTICE 'Extension uuid-ossp existe déjà';
-    END IF;
-END
-$$;
-
--- Message de préparation
-RAISE NOTICE 'Préparation terminée. Exécutez maintenant:';
-RAISE NOTICE '1. psql -d kwetu_garage -f schema.sql';
-RAISE NOTICE '2. psql -d kwetu_garage -f seed.sql';
+SELECT 'Utilisez install-kwetu-garage.ps1 ou les commandes ci-dessus.' AS instruction;

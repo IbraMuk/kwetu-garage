@@ -1,8 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Alert,
+  Image,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -13,8 +13,7 @@ import {
   View,
 } from "react-native";
 import ScreenLayout from "../components/ScreenLayout";
-import { authService, LoginCredentials, mapAuthUserToStorage } from "../services/authService";
-import { storageService } from "../services/storageService";
+import { useAuth } from "../contexts/AuthContext";
 import { colors, commonStyles, spacing } from "../theme";
 
 export default function LoginScreen() {
@@ -22,61 +21,27 @@ export default function LoginScreen() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const navigation = useNavigation();
-
-  useEffect(() => {
-    checkAuthStatus();
-  }, []);
-
-  const checkAuthStatus = async () => {
-    try {
-      const isLoggedIn = await storageService.isLoggedIn();
-      const token = await storageService.getToken();
-      if (isLoggedIn && token) {
-        navigation.reset({ index: 0, routes: [{ name: "Tabs" as never }] });
-      }
-    } catch (error) {
-      console.error("Error checking auth status:", error);
-    }
-  };
+  const { login } = useAuth();
 
   const handleLogin = async () => {
-    if (!email || !password) {
+    if (!email.trim() || !password) {
       Alert.alert("Erreur", "Veuillez remplir tous les champs");
       return;
     }
 
     setLoading(true);
     try {
-      const credentials: LoginCredentials = { email, password };
-      const response = await authService.login(credentials);
-      await storageService.setToken(response.token);
-      await storageService.setUserInfo(mapAuthUserToStorage(response.user));
-      await storageService.setLoggedIn(true);
-      navigation.reset({ index: 0, routes: [{ name: "Tabs" as never }] });
+      const credentials = { email: email.trim(), password };
+      console.log("Tentative de connexion avec:", credentials.email);
+      await login(credentials);
     } catch (error) {
+      console.error("Erreur de connexion:", error);
       Alert.alert(
-        "Erreur",
-        error instanceof Error ? error.message : "Impossible de se connecter",
+        "Erreur de connexion",
+        error instanceof Error ? error.message : "Impossible de se connecter"
       );
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleForgotPassword = async () => {
-    if (!email) {
-      Alert.alert("Erreur", "Veuillez entrer votre email");
-      return;
-    }
-    try {
-      await authService.forgotPassword(email);
-      Alert.alert("Succès", "Un email de réinitialisation a été envoyé");
-    } catch (error) {
-      Alert.alert(
-        "Erreur",
-        error instanceof Error ? error.message : "Impossible de demander la réinitialisation",
-      );
     }
   };
 
@@ -93,7 +58,11 @@ export default function LoginScreen() {
         >
           <View style={styles.header}>
             <View style={styles.logoRing}>
-              <Ionicons name="car-sport" size={56} color={colors.primaryLight} />
+              <Image
+                source={require("../../assets/icon.png")}
+                style={styles.logoImage}
+                resizeMode="contain"
+              />
             </View>
             <Text style={styles.brand}>Kwetu Garage</Text>
             <Text style={styles.tagline}>La gestion de garage, réinventée</Text>
@@ -136,33 +105,21 @@ export default function LoginScreen() {
               </TouchableOpacity>
             </View>
 
-            <TouchableOpacity style={styles.forgot} onPress={handleForgotPassword}>
-              <Text style={styles.forgotText}>Mot de passe oublié ?</Text>
-            </TouchableOpacity>
-
             <TouchableOpacity
               style={[styles.loginBtn, loading && styles.loginBtnDisabled]}
               onPress={handleLogin}
               disabled={loading}
               activeOpacity={0.9}
             >
-              <Ionicons name="construct" size={22} color={colors.text} style={styles.btnIcon} />
-              <Text style={styles.loginBtnText}>
-                {loading ? "Connexion en cours..." : "Accéder au garage"}
-              </Text>
+              {loading ? (
+                <Text style={styles.loginBtnText}>Connexion en cours...</Text>
+              ) : (
+                <>
+                  <Ionicons name="construct" size={22} color={colors.text} style={styles.btnIcon} />
+                  <Text style={styles.loginBtnText}>Accéder à mon garage</Text>
+                </>
+              )}
             </TouchableOpacity>
-          </View>
-
-          <View style={styles.demoCard}>
-            <Text style={styles.demoTitle}>Accès démonstration</Text>
-            <View style={styles.demoRow}>
-              <Text style={styles.demoLabel}>Email</Text>
-              <Text style={styles.demoValue}>admin@kwetugarage.com</Text>
-            </View>
-            <View style={styles.demoRow}>
-              <Text style={styles.demoLabel}>Mot de passe</Text>
-              <Text style={styles.demoValue}>password123</Text>
-            </View>
           </View>
 
           <Text style={styles.footer}>© 2024 Kwetu Garage</Text>
@@ -191,6 +148,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginBottom: spacing.md,
+    overflow: "hidden",
+  },
+  logoImage: {
+    width: 80,
+    height: 80,
   },
   brand: {
     fontSize: 32,
@@ -220,8 +182,6 @@ const styles = StyleSheet.create({
     borderRadius: 24,
   },
   inputPad: { marginLeft: spacing.sm },
-  forgot: { alignSelf: "flex-end", marginBottom: spacing.lg },
-  forgotText: { color: colors.primaryLight, fontWeight: "700", fontSize: 14 },
   loginBtn: {
     flexDirection: "row",
     justifyContent: "center",
@@ -229,40 +189,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     borderRadius: 16,
     paddingVertical: 16,
+    marginTop: spacing.md,
+    gap: spacing.sm,
   },
   loginBtnDisabled: { opacity: 0.6 },
   btnIcon: { marginRight: spacing.sm },
   loginBtnText: { color: colors.text, fontSize: 16, fontWeight: "800" },
-  demoCard: {
-    marginTop: spacing.lg,
-    padding: spacing.md,
-    borderRadius: 20,
-    backgroundColor: "rgba(37, 99, 235, 0.12)",
-    borderWidth: 1,
-    borderColor: "rgba(59, 130, 246, 0.25)",
-  },
-  demoTitle: {
-    textAlign: "center",
-    color: colors.textSecondary,
-    fontWeight: "700",
-    marginBottom: spacing.md,
-    fontSize: 13,
-  },
-  demoRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: spacing.sm,
-    backgroundColor: colors.glass,
-    padding: spacing.sm,
-    borderRadius: 12,
-  },
-  demoLabel: { color: colors.textMuted, fontSize: 12 },
-  demoValue: {
-    color: colors.primaryLight,
-    fontSize: 12,
-    fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace",
-  },
   footer: {
     textAlign: "center",
     marginTop: spacing.xl,

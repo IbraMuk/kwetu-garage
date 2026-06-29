@@ -5,10 +5,10 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Routes publiques
-  const publicPaths = ['/login', '/register']
+  const publicPaths = ['/', '/login', '/register']
   
-  // Vérifier si le chemin est public
-  const isPublicPath = publicPaths.includes(pathname)
+  // Vérifier si le chemin est public (racine exacte ou routes publiques)
+  const isPublicPath = pathname === '/' || publicPaths.includes(pathname)
 
   // Récupérer le token depuis les cookies
   const token = request.cookies.get('token')?.value || request.headers.get('authorization')?.replace('Bearer ', '')

@@ -2,9 +2,8 @@
 -- Données de démonstration pour Kwetu Garage
 -- ========================================
 
--- NOTE: Les mots de passe sont hashés avec bcrypt
--- admin@kwetugarage.com -> password123 (hash: $2b$10$rOzJqQjQjQjQjQjQjQjQu)
--- mechanic@kwetugarage.com -> password123 (hash: $2b$10$rOzJqQjQjQjQjQjQjQjQu)
+-- NOTE: Mots de passe bcrypt pour « password123 » (généré avec bcryptjs, cost 10)
+-- Tous les comptes démo ci-dessous utilisent le même hash pour simplifier les tests.
 
 -- ========================================
 -- UTILISATEURS
@@ -12,13 +11,14 @@
 
 -- Administrateur
 INSERT INTO users (id, email, password_hash, first_name, last_name, role, phone) VALUES 
-('550e8400-e29b-41d4-a716-446655440001', 'admin@kwetugarage.com', '$2b$10$rOzJqQjQjQjQjQjQjQjQu', 'Admin', 'Kwetu', 'admin', '+221 77 123 45 67');
+('550e8400-e29b-41d4-a716-446655440001', 'admin@kwetugarage.com', '$2a$10$7aIE7Xn4NNSsXjCCPwjOlOov0uinmD5ecMpSoFLSo6Fr5Wi3j6Tie', 'Admin', 'Kwetu', 'admin', '+221 77 123 45 67');
 
--- Mécaniciens
+-- Mécaniciens et réception
 INSERT INTO users (id, email, password_hash, first_name, last_name, role, phone) VALUES 
-('550e8400-e29b-41d4-a716-446655440002', 'mechanic1@kwetugarage.com', '$2b$10$rOzJqQjQjQjQjQjQjQjQu', 'Pierre', 'Ndiaye', 'mechanic', '+221 77 234 56 78'),
-('550e8400-e29b-41d4-a716-446655440003', 'mechanic2@kwetugarage.com', '$2b$10$rOzJqQjQjQjQjQjQjQjQu', 'Marie', 'Fall', 'mechanic', '+221 77 345 67 89'),
-('550e8400-e29b-41d4-a716-446655440004', 'receptionist@kwetugarage.com', '$2b$10$rOzJqQjQjQjQjQjQjQjQu', 'Aïssatou', 'Ba', 'receptionist', '+221 77 456 78 90');
+('550e8400-e29b-41d4-a716-446655440002', 'mechanic1@kwetugarage.com', '$2a$10$7aIE7Xn4NNSsXjCCPwjOlOov0uinmD5ecMpSoFLSo6Fr5Wi3j6Tie', 'Pierre', 'Ndiaye', 'mechanic', '+221 77 234 56 78'),
+('550e8400-e29b-41d4-a716-446655440003', 'mechanic2@kwetugarage.com', '$2a$10$7aIE7Xn4NNSsXjCCPwjOlOov0uinmD5ecMpSoFLSo6Fr5Wi3j6Tie', 'Marie', 'Fall', 'mechanic', '+221 77 345 67 89'),
+('550e8400-e29b-41d4-a716-446655440004', 'receptionist@kwetugarage.com', '$2a$10$7aIE7Xn4NNSsXjCCPwjOlOov0uinmD5ecMpSoFLSo6Fr5Wi3j6Tie', 'Aïssatou', 'Ba', 'receptionist', '+221 77 456 78 90'),
+('550e8400-e29b-41d4-a716-446655440005', 'manager@kwetugarage.com', '$2a$10$7aIE7Xn4NNSsXjCCPwjOlOov0uinmD5ecMpSoFLSo6Fr5Wi3j6Tie', 'Ibrahima', 'Sow', 'manager', '+221 77 111 22 33');
 
 -- ========================================
 -- MÉCANICIENS (DÉTAILS)
@@ -33,26 +33,25 @@ INSERT INTO mechanics (id, user_id, speciality, hourly_rate, is_available, hire_
 -- ========================================
 
 INSERT INTO clients (id, first_name, last_name, email, phone, address, is_professional, company_name) VALUES 
-('770e8400-e29b-41d4-a716-446655440001', 'Mamadou', 'Diallo', 'mamadou.diallo@email.com', '+221 77 123 45 67', 'Rue 123, Dakar', false, NULL),
-('770e8400-e29b-41d4-a716-446655440002', 'Fatou', 'Sarr', 'fatou.sarr@email.com', '+221 76 234 56 78', 'Avenue 456, Thiès', false, NULL),
-('770e8400-e29b-41d4-a716-446655440003', 'Cheikh', 'Lo', 'cheikh.lo@email.com', '+221 78 345 67 89', 'Boulevard 789, Saint-Louis', false, NULL),
-('770e8400-e29b-41d4-a716-446655440004', 'Aminata', 'Cissé', 'contact@transport-senegal.sn', '+221 33 456 78 90', 'Zone Industrielle, Diamniadio', true, 'Transport Sénégal SARL'),
-('770e8400-e29b-41d4-a716-446655440005', 'Baba', 'Diop', 'baba.diop@email.com', '+221 77 567 89 01', 'Impasse 321, Kaolack', false, NULL),
-('770e8400-e29b-41d4-a716-446655440006', 'Mariam', 'Sow', 'mariam.sow@email.com', '+221 76 678 90 12', 'Route 654, Mbour', false, NULL);
+('770e8400-e29b-41d4-a716-446655440001', 'Marco', 'Omari', 'marco.omari@gmail.com', '+243 97 123 45 67', 'Rue 123, Lubumbashi', false, NULL),
+('770e8400-e29b-41d4-a716-446655440002', 'John', 'Ilunga Tshishimbi', 'johntshishimbi@gmail.com', '+243 976 234 56 78', 'Avenue Rubi, Lido-Golf Lubumbashi', false, NULL),
+('770e8400-e29b-41d4-a716-446655440003', 'Olivier', 'Mukena', 'mukenaolivier@gmail.com', '+243 78 345 67 89', 'Boulevard 789,Lubumbashi', false, NULL),
+('770e8400-e29b-41d4-a716-446655440004', 'Africa', 'Connect', 'contact@africaconect.com', '+243 89 456 78 90', 'Zone Industrielle, Diamniadio', true, 'Transport Sénégal SARL'),
+
 
 -- ========================================
 -- VÉHICULES
 -- ========================================
 
 INSERT INTO vehicles (id, client_id, make, model, year, license_plate, vin, mileage, fuel_type, transmission, color) VALUES 
-('880e8400-e29b-41d4-a716-446655440001', '770e8400-e29b-41d4-a716-446655440001', 'Toyota', 'Corolla', 2020, 'DK-1234-AB', '1HGBH41JXMN109186', 45000, 'essence', 'manuelle', 'Noir'),
-('880e8400-e29b-41d4-a716-446655440002', '770e8400-e29b-41d4-a716-446655440002', 'Peugeot', '208', 2022, 'DK-5678-CD', 'VF7CURHZC12345678', 25000, 'diesel', 'manuelle', 'Blanc'),
-('880e8400-e29b-41d4-a716-446655440003', '770e8400-e29b-41d4-a716-446655440003', 'Renault', 'Duster', 2021, 'DK-9012-EF', 'VF1HG2B58AH123456', 35000, 'diesel', 'automatique', 'Gris'),
-('880e8400-e29b-41d4-a716-446655440004', '770e8400-e29b-41d4-a716-446655440004', 'Mercedes', 'Sprinter', 2019, 'DK-3456-GH', 'WDB9061551P123456', 120000, 'diesel', 'automatique', 'Blanc'),
-('880e8400-e29b-41d4-a716-446655440005', '770e8400-e29b-41d4-a716-446655440005', 'Hyundai', 'Tucson', 2023, 'DK-7890-IJ', 'KM8J3CA4APU123456', 15000, 'hybride', 'automatique', 'Bleu'),
-('880e8400-e29b-41d4-a716-446655440006', '770e8400-e29b-41d4-a716-446655440006', 'Nissan', 'Almera', 2020, 'DK-2345-KL', 'JN1BA17E3AM123456', 40000, 'essence', 'automatique', 'Rouge'),
-('880e8400-e29b-41d4-a716-446655440007', '770e8400-e29b-41d4-a716-446655440001', 'Toyota', 'Hilux', 2021, 'DK-6789-MN', 'MR0BE9CDAP123456', 60000, 'diesel', 'manuelle', 'Noir'),
-('880e8400-e29b-41d4-a716-446655440008', '770e8400-e29b-41d4-a716-446655440002', 'Volkswagen', 'Golf', 2022, 'DK-0123-OP', 'WVWZZZAUZNP123456', 20000, 'diesel', 'automatique', 'Gris');
+('880e8400-e29b-41d4-a716-446655440001', '770e8400-e29b-41d4-a716-446655440001', 'Toyota', 'Corolla', 2020, '7845AH05', '1HGBH41JXMN109186', 45000, 'essence', 'manuelle', 'Noir'),
+('880e8400-e29b-41d4-a716-446655440002', '770e8400-e29b-41d4-a716-446655440002', 'Peugeot', '208', 2022, '5412AW05', 'VF7CURHZC12345678', 25000, 'diesel', 'manuelle', 'Blanc'),
+('880e8400-e29b-41d4-a716-446655440003', '770e8400-e29b-41d4-a716-446655440003', 'Renault', 'Duster', 2021, '4512AF05', 'VF1HG2B58AH123456', 35000, 'diesel', 'automatique', 'Gris'),
+('880e8400-e29b-41d4-a716-446655440004', '770e8400-e29b-41d4-a716-446655440004', 'Mercedes', 'Sprinter', 2019, '2563BC01', 'WDB9061551P123456', 120000, 'diesel', 'automatique', 'Blanc'),
+('880e8400-e29b-41d4-a716-446655440005', '770e8400-e29b-41d4-a716-446655440005', 'Hyundai', 'Tucson', 2023, '1254AD04', 'KM8J3CA4APU123456', 15000, 'hybride', 'automatique', 'Bleu'),
+('880e8400-e29b-41d4-a716-446655440006', '770e8400-e29b-41d4-a716-446655440006', 'Nissan', 'Almera', 2020, '5987AV05', 'JN1BA17E3AM123456', 40000, 'essence', 'automatique', 'Rouge'),
+('880e8400-e29b-41d4-a716-446655440007', '770e8400-e29b-41d4-a716-446655440001', 'Toyota', 'Hilux', 2021, '6514BC01', 'MR0BE9CDAP123456', 60000, 'diesel', 'manuelle', 'Noir'),
+('880e8400-e29b-41d4-a716-446655440008', '770e8400-e29b-41d4-a716-446655440002', 'Volkswagen', 'Golf', 2022, '2014AX05', 'WVWZZZAUZNP123456', 20000, 'diesel', 'automatique', 'Gris');
 
 -- ========================================
 -- PIÈCES DÉTACHÉES
@@ -65,7 +64,7 @@ INSERT INTO parts (id, name, reference, description, category, price, stock_quan
 ('990e8400-e29b-41d4-a716-446655440004', 'Plaquette de frein avant', 'PF-004', 'Plaquettes de frein avant standard', 'Freinage', 35.00, 20, 8, 'Brembo Sénégal', 'C3'),
 ('990e8400-e29b-41d4-a716-446655440005', 'Disque de frein avant', 'DF-005', 'Disque de frein avant ventilé', 'Freinage', 45.50, 15, 5, 'Brembo Sénégal', 'C3'),
 ('990e8400-e29b-41d4-a716-446655440006', 'Huile moteur 5W30', 'HM-006', 'Huile moteur synthétique 5W30 5L', 'Lubrifiants', 28.90, 40, 20, 'Shell Sénégal', 'D1'),
-('990e8400-e29b-41d4-a716-4466554407', 'Ampoule phare H4', 'AP-007', 'Ampoule phare H4 60/55W', 'Éclairage', 12.30, 60, 25, 'Philips Sénégal', 'E1'),
+('990e8400-e29b-41d4-a716-446655440007', 'Ampoule phare H4', 'AP-007', 'Ampoule phare H4 60/55W', 'Éclairage', 12.30, 60, 25, 'Philips Sénégal', 'E1'),
 ('990e8400-e29b-41d4-a716-446655440008', 'Batterie 12V 60Ah', 'BT-008', 'Batterie voiture 12V 60Ah', 'Électricité', 85.00, 10, 5, 'Bosch Sénégal', 'E2'),
 ('990e8400-e29b-41d4-a716-446655440009', 'Courroie de distribution', 'CD-009', 'Courroie de distribution standard', 'Distribution', 42.75, 8, 3, 'Gates Sénégal', 'F1'),
 ('990e8400-e29b-41d4-a716-446655440010', 'Kit d embrayage', 'KE-010', 'Kit d embrayage complet', 'Transmission', 125.00, 5, 2, 'Valeo Sénégal', 'F2'),
@@ -110,7 +109,7 @@ INSERT INTO invoices (id, client_id, repair_id, invoice_number, issue_date, due_
 ('B20e8400-e29b-41d4-a716-446655440003', '770e8400-e29b-41d4-a716-446655440003', 'A10e8400-e29b-41d4-a716-446655440003', 'FAC-202405-0003', '2024-05-10', '2024-05-24', 67.50, 20.00, 'pending', NULL, NULL, 'En attente de validation'),
 ('B20e8400-e29b-41d4-a716-446655440004', '770e8400-e29b-41d4-a716-446655440004', 'A10e8400-e29b-41d4-a716-446655440004', 'FAC-202405-0004', '2024-05-05', '2024-05-19', 145.00, 20.00, 'paid', 'Virement bancaire', '2024-05-06', 'Entreprise'),
 ('B20e8400-e29b-41d4-a716-446655440005', '770e8400-e29b-41d4-a716-446655440005', 'A10e8400-e29b-41d4-a716-446655440005', 'FAC-202405-0005', '2024-05-08', '2024-05-22', 107.50, 20.00, 'paid', 'Carte bancaire', '2024-05-08', 'Garantie batterie 2 ans'),
-('B20e8400-e29b-41d4-a716-446655440006', '770e8400-e29b-41d4-a716-446655440007', 'A10e8400-e29b-41d4-a716-446655440007', 'FAC-202405-0006', '2024-05-06', '2024-05-20', 256.00, 20.00, 'overdue', NULL, NULL, 'Facture en retard'),
+('B20e8400-e29b-41d4-a716-446655440006', '770e8400-e29b-41d4-a716-446655440001', 'A10e8400-e29b-41d4-a716-446655440007', 'FAC-202405-0006', '2024-05-06', '2024-05-20', 256.00, 20.00, 'overdue', NULL, NULL, 'Facture en retard'),
 ('B20e8400-e29b-41d4-a716-446655440007', '770e8400-e29b-41d4-a716-446655440006', 'A10e8400-e29b-41d4-a716-446655440006', 'FAC-202405-0007', '2024-05-15', '2024-05-29', 40.00, 20.00, 'pending', NULL, NULL, 'En attente pneus');
 
 -- ========================================

@@ -50,8 +50,15 @@ export const authService = {
   },
 
   async logout(): Promise<void> {
+    const { storageService } = await import("./storageService");
+    const token = await storageService.getToken();
+    if (!token) return;
     try {
-      await axios.post(`${API_BASE_URL}/auth/logout`);
+      await axios.post(
+        `${API_BASE_URL}/auth/logout`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
     } catch {
       // Déconnexion locale même si le serveur ne répond pas
     }

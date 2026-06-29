@@ -922,13 +922,15 @@ body {
 
 .app-shell .input,
 .app-shell .form-input {
-  @apply border-white/20 bg-white/10 text-white placeholder-gray-500 backdrop-blur;
+  @apply border-slate-300 bg-white text-gray-900 placeholder-slate-500 shadow-sm;
+  color: #0a0a0a;
 }
 
 .app-shell .input:focus,
 .app-shell .form-input:focus {
-  @apply border-blue-500/50 ring-blue-500/30;
-  background: rgba(255, 255, 255, 0.15);
+  @apply border-blue-500 ring-2 ring-blue-500/25;
+  background: #ffffff;
+  color: #0a0a0a;
 }
 
 .app-shell .form-label {

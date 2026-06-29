@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "name": "kwetu-garage-web",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "env": {
+    "NEXT_PUBLIC_API_URL": "@next_public_api_url",
+    "NEXT_PUBLIC_BACKEND_URL": "@next_public_backend_url"
+  }
+}

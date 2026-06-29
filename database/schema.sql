@@ -21,7 +21,7 @@ CREATE TABLE users (
     password_hash VARCHAR(255) NOT NULL,
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
-    role VARCHAR(50) NOT NULL CHECK (role IN ('admin', 'mechanic', 'receptionist')),
+    role VARCHAR(50) NOT NULL CHECK (role IN ('admin', 'manager', 'mechanic', 'receptionist')),
     phone VARCHAR(20),
     is_active BOOLEAN DEFAULT true,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -132,7 +132,7 @@ CREATE TABLE invoices (
     subtotal DECIMAL(10,2) NOT NULL CHECK (subtotal >= 0),
     tax_rate DECIMAL(5,2) DEFAULT 20.00 CHECK (tax_rate >= 0),
     tax_amount DECIMAL(10,2) GENERATED ALWAYS AS (subtotal * tax_rate / 100) STORED,
-    total_amount DECIMAL(10,2) NOT NULL GENERATED ALWAYS AS (subtotal + tax_amount) STORED,
+    total_amount DECIMAL(10,2) NOT NULL GENERATED ALWAYS AS (subtotal + (subtotal * tax_rate / 100)) STORED,
     status VARCHAR(50) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'paid', 'overdue', 'cancelled')),
     payment_method VARCHAR(50),
     payment_date TIMESTAMP WITH TIME ZONE,
@@ -253,14 +253,14 @@ END;
 $$ language 'plpgsql';
 
 -- Triggers pour updated_at
-CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_clients_updated_at BEFORE UPDATE ON clients FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_vehicles_updated_at BEFORE UPDATE ON vehicles FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_mechanics_updated_at BEFORE UPDATE ON mechanics FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_repairs_updated_at BEFORE UPDATE ON repairs FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_parts_updated_at BEFORE UPDATE ON parts FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_invoices_updated_at BEFORE UPDATE ON invoices FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_appointments_updated_at BEFORE UPDATE ON appointments FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
+CREATE TRIGGER update_clients_updated_at BEFORE UPDATE ON clients FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
+CREATE TRIGGER update_vehicles_updated_at BEFORE UPDATE ON vehicles FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
+CREATE TRIGGER update_mechanics_updated_at BEFORE UPDATE ON mechanics FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
+CREATE TRIGGER update_repairs_updated_at BEFORE UPDATE ON repairs FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
+CREATE TRIGGER update_parts_updated_at BEFORE UPDATE ON parts FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
+CREATE TRIGGER update_invoices_updated_at BEFORE UPDATE ON invoices FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
+CREATE TRIGGER update_appointments_updated_at BEFORE UPDATE ON appointments FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 
 -- Fonction pour générer automatiquement les numéros de facture
 CREATE OR REPLACE FUNCTION generate_invoice_number()
@@ -278,7 +278,7 @@ END;
 $$ language 'plpgsql';
 
 -- Trigger pour générer les numéros de facture
-CREATE TRIGGER generate_invoice_number_trigger BEFORE INSERT ON invoices FOR EACH ROW EXECUTE FUNCTION generate_invoice_number();
+CREATE TRIGGER generate_invoice_number_trigger BEFORE INSERT ON invoices FOR EACH ROW EXECUTE PROCEDURE generate_invoice_number();
 
 -- Fonction pour mettre à jour le stock des pièces
 CREATE OR REPLACE FUNCTION update_part_stock()
@@ -307,7 +307,7 @@ $$ language 'plpgsql';
 -- Trigger pour mettre à jour le stock
 CREATE TRIGGER update_part_stock_trigger
     AFTER INSERT OR UPDATE OR DELETE ON repair_parts
-    FOR EACH ROW EXECUTE FUNCTION update_part_stock();
+    FOR EACH ROW EXECUTE PROCEDURE update_part_stock();
 
 -- ========================================
 -- VUES UTILES

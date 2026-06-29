@@ -355,33 +355,6 @@ export default function LoginPage() {
             </form>
           </div>
 
-          {/* Informations de démo */}
-          <div
-            className="mt-8 bg-gradient-to-r from-blue-500/10 to-blue-600/10 backdrop-blur-md rounded-3xl p-6 border border-blue-500/20 animate-slideUp"
-            style={{ animationDelay: "0.2s" }}
-          >
-            <p className="text-center text-sm text-gray-200 mb-4 font-bold">
-              Accès démonstration
-            </p>
-            <div className="bg-white/10 backdrop-blur rounded-2xl p-4 space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-xs text-gray-300 font-medium">
-                  Email:
-                </span>
-                <code className="text-xs text-blue-400 bg-white/10 px-3 py-1.5 rounded-lg font-mono">
-                  admin@kwetugarage.com
-                </code>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-xs text-gray-300 font-medium">
-                  Mot de passe:
-                </span>
-                <code className="text-xs text-blue-400 bg-white/10 px-3 py-1.5 rounded-lg font-mono">
-                  password123
-                </code>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 

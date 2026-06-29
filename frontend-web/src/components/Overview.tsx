@@ -89,12 +89,21 @@ export default function Overview() {
         api.get('/invoices'),
       ])
 
+      const clients = Array.isArray(clientsRes.data) ? clientsRes.data : []
+      const vehicles = Array.isArray(vehiclesRes.data) ? vehiclesRes.data : []
+      const repairs = Array.isArray(repairsRes.data) ? repairsRes.data : []
+      const parts = Array.isArray(partsRes.data) ? partsRes.data : []
+      const invoices = Array.isArray(invoicesRes.data) ? invoicesRes.data : []
+
       setStats({
-        totalClients: clientsRes.data.length,
-        totalVehicles: vehiclesRes.data.length,
-        activeRepairs: repairsRes.data.filter((r: any) => r.status !== 'completed').length,
-        lowStockParts: partsRes.data.filter((p: any) => p.stock_quantity <= p.min_stock_level).length,
-        pendingInvoices: invoicesRes.data.filter((i: any) => i.status === 'pending').length,
+        totalClients: clients.length,
+        totalVehicles: vehicles.length,
+        activeRepairs: repairs.filter((r: { status?: string }) => r.status !== 'completed').length,
+        lowStockParts: parts.filter(
+          (p: { stock_quantity?: number; min_stock_level?: number }) =>
+            (p.stock_quantity ?? 0) <= (p.min_stock_level ?? 0),
+        ).length,
+        pendingInvoices: invoices.filter((i: { status?: string }) => i.status === 'pending').length,
         monthlyRevenue: 0,
       })
     } catch (error) {

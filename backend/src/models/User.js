@@ -4,7 +4,7 @@ class User {
   static async create(userData) {
     const { email, password, first_name, last_name, role = 'mechanic' } = userData;
     const query = `
-      INSERT INTO users (email, password, first_name, last_name, role)
+      INSERT INTO users (email, password_hash, first_name, last_name, role)
       VALUES ($1, $2, $3, $4, $5)
       RETURNING id, email, first_name, last_name, role, created_at
     `;

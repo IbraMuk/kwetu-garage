@@ -9,17 +9,33 @@ const router = express.Router();
 // Désactivé temporairement pour le développement
 // router.use(auth);
 
+function phoneOptional() {
+  return body('phone')
+    .optional({ values: 'falsy' })
+    .trim()
+    .custom((value) => {
+      if (!value) return true;
+      if (!/^\+?[\d\s\-()]+$/.test(value)) {
+        throw new Error('Format de téléphone invalide');
+      }
+      return true;
+    });
+}
+
 // Créer un client
 router.post('/', [
   body('first_name').notEmpty().trim(),
   body('last_name').notEmpty().trim(),
-  body('email').optional().isEmail().normalizeEmail(),
-  body('phone').optional().isMobilePhone('any'),
+  body('email').optional({ values: 'falsy' }).isEmail().normalizeEmail(),
+  phoneOptional(),
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({
+        error: errors.array().map((e) => e.msg).join(' · ') || 'Données invalides',
+        errors: errors.array(),
+      });
     }
 
     const client = await Client.create(req.body);
@@ -63,13 +79,16 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', [
   body('first_name').optional().notEmpty().trim(),
   body('last_name').optional().notEmpty().trim(),
-  body('email').optional().isEmail().normalizeEmail(),
-  body('phone').optional().isMobilePhone('any'),
+  body('email').optional({ values: 'falsy' }).isEmail().normalizeEmail(),
+  phoneOptional(),
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({
+        error: errors.array().map((e) => e.msg).join(' · ') || 'Données invalides',
+        errors: errors.array(),
+      });
     }
 
     const client = await Client.update(req.params.id, req.body);

@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { useEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Alert,
   FlatList,
@@ -10,36 +11,21 @@ import {
   View,
 } from "react-native";
 import { Searchbar } from "react-native-paper";
+import { ClientFormModal } from "../components/EntityFormModals";
 import ScreenHeader from "../components/ScreenHeader";
 import ScreenLayout from "../components/ScreenLayout";
 import { apiService } from "../services/apiService";
 import { Client } from "../types";
 import { colors, commonStyles, spacing } from "../theme";
 
-export default function ClientsScreen({ navigation }: any) {
+export default function ClientsScreen() {
   const [clients, setClients] = useState<Client[]>([]);
   const [filteredClients, setFilteredClients] = useState<Client[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [refreshing, setRefreshing] = useState(false);
+  const [formVisible, setFormVisible] = useState(false);
 
-  useEffect(() => {
-    loadClients();
-  }, []);
-
-  useEffect(() => {
-    const q = searchQuery.toLowerCase();
-    setFilteredClients(
-      clients.filter(
-        (c) =>
-          c.first_name.toLowerCase().includes(q) ||
-          c.last_name.toLowerCase().includes(q) ||
-          c.email?.toLowerCase().includes(q) ||
-          c.company_name?.toLowerCase().includes(q),
-      ),
-    );
-  }, [clients, searchQuery]);
-
-  const loadClients = async () => {
+  const loadClients = useCallback(async () => {
     try {
       const data = await apiService.getClients();
       setClients(data);
@@ -49,7 +35,26 @@ export default function ClientsScreen({ navigation }: any) {
         error instanceof Error ? error.message : "Impossible de charger les clients",
       );
     }
-  };
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      void loadClients();
+    }, [loadClients]),
+  );
+
+  useEffect(() => {
+    const q = searchQuery.toLowerCase();
+    setFilteredClients(
+      clients.filter(
+        (c) =>
+          c.first_name.toLowerCase().includes(q) ||
+          c.last_name.toLowerCase().includes(q) ||
+          (c.email ?? "").toLowerCase().includes(q) ||
+          (c.company_name ?? "").toLowerCase().includes(q),
+      ),
+    );
+  }, [clients, searchQuery]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -68,6 +73,34 @@ export default function ClientsScreen({ navigation }: any) {
       ]
         .filter(Boolean)
         .join("\n") || "Aucune information supplémentaire",
+      [
+        { text: "Fermer", style: "cancel" },
+        {
+          text: "Supprimer",
+          style: "destructive",
+          onPress: () => {
+            Alert.alert("Confirmer", "Supprimer ce client ?", [
+              { text: "Annuler", style: "cancel" },
+              {
+                text: "Supprimer",
+                style: "destructive",
+                onPress: () =>
+                  void (async () => {
+                    try {
+                      await apiService.deleteClient(client.id);
+                      await loadClients();
+                    } catch (e) {
+                      Alert.alert(
+                        "Erreur",
+                        e instanceof Error ? e.message : "Suppression impossible",
+                      );
+                    }
+                  })(),
+              },
+            ]);
+          },
+        },
+      ],
     );
   };
 
@@ -102,12 +135,7 @@ export default function ClientsScreen({ navigation }: any) {
       <ScreenHeader
         title="Clients"
         subtitle="Gestion de la clientèle"
-        onAdd={() =>
-          Alert.alert(
-            "Bientôt disponible",
-            "L'ajout de clients depuis l'app mobile arrive prochainement. Utilisez la version web en attendant.",
-          )
-        }
+        onAdd={() => setFormVisible(true)}
       />
       <Searchbar
         placeholder="Rechercher un client..."
@@ -132,6 +160,11 @@ export default function ClientsScreen({ navigation }: any) {
             <Text style={commonStyles.emptyText}>Aucun client trouvé</Text>
           </View>
         }
+      />
+      <ClientFormModal
+        visible={formVisible}
+        onClose={() => setFormVisible(false)}
+        onSaved={() => void loadClients()}
       />
     </ScreenLayout>
   );

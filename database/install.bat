@@ -1,7 +1,11 @@
 @echo off
+cd /d "%~dp0"
 echo ========================================
 echo Installation Base de donnees Kwetu Garage
 echo ========================================
+echo.
+echo Astuce: definissez PGPASSWORD avant ce script pour eviter les invites.
+echo   set PGPASSWORD=votre_mot_de_passe
 echo.
 
 REM Vérifier si PostgreSQL est installé
@@ -18,7 +22,7 @@ echo.
 
 REM Créer la base de données
 echo 1. Creation de la base de donnees...
-psql -U postgres -c "CREATE DATABASE kwetu_garage;" 2>nul
+psql -U postgres -d postgres -c "CREATE DATABASE kwetu_garage WITH ENCODING 'UTF8' TEMPLATE template0;" 2>nul
 if errorlevel 1 (
     echo La base de donnees existe deja ou erreur de creation
 ) else (
@@ -28,7 +32,7 @@ if errorlevel 1 (
 REM Exécuter le schéma
 echo.
 echo 2. Creation du schema...
-psql -U postgres -d kwetu_garage -f schema.sql
+psql -U postgres -d kwetu_garage -v ON_ERROR_STOP=1 -f schema.sql
 if errorlevel 1 (
     echo ERREUR lors de la creation du schema
     pause
@@ -40,7 +44,7 @@ if errorlevel 1 (
 REM Insérer les données de démo
 echo.
 echo 3. Insertion des donnees de demonstration...
-psql -U postgres -d kwetu_garage -f seed.sql
+psql -U postgres -d kwetu_garage -v ON_ERROR_STOP=1 -f seed.sql
 if errorlevel 1 (
     echo ERREUR lors de l'insertion des donnees
     pause
@@ -54,10 +58,11 @@ echo ========================================
 echo Installation terminee avec succes!
 echo ========================================
 echo.
-echo Utilisateurs de demo:
-echo   - admin@kwetugarage.com (mot de passe: password123)
-echo   - mechanic1@kwetugarage.com (mot de passe: password123)
-echo   - receptionist@kwetugarage.com (mot de passe: password123)
+echo Utilisateurs de demo (mot de passe: password123):
+echo   - admin@kwetugarage.com
+echo   - manager@kwetugarage.com
+echo   - mechanic1@kwetugarage.com
+echo   - receptionist@kwetugarage.com
 echo.
 echo Base de donnees "kwetu_garage" prete a utiliser!
 echo.

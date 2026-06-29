@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import UserMenuButton from "./UserMenuButton";
 import { colors, spacing } from "../theme";
 
 type ScreenHeaderProps = {
@@ -8,6 +9,7 @@ type ScreenHeaderProps = {
   subtitle?: string;
   onAdd?: () => void;
   addLabel?: string;
+  showUserButton?: boolean;
 };
 
 export default function ScreenHeader({
@@ -15,6 +17,7 @@ export default function ScreenHeader({
   subtitle,
   onAdd,
   addLabel = "Ajouter",
+  showUserButton = false,
 }: ScreenHeaderProps) {
   return (
     <View style={styles.wrap}>
@@ -22,12 +25,15 @@ export default function ScreenHeader({
         <Text style={styles.title}>{title}</Text>
         {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
       </View>
-      {onAdd ? (
-        <TouchableOpacity style={styles.addBtn} onPress={onAdd} activeOpacity={0.85}>
-          <Ionicons name="add" size={22} color={colors.text} />
-          <Text style={styles.addText}>{addLabel}</Text>
-        </TouchableOpacity>
-      ) : null}
+      <View style={styles.actions}>
+        {showUserButton ? <UserMenuButton size="sm" /> : null}
+        {onAdd ? (
+          <TouchableOpacity style={styles.addBtn} onPress={onAdd} activeOpacity={0.85}>
+            <Ionicons name="add" size={22} color={colors.text} />
+            <Text style={styles.addText}>{addLabel}</Text>
+          </TouchableOpacity>
+        ) : null}
+      </View>
     </View>
   );
 }
@@ -43,6 +49,12 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   textBlock: { flex: 1 },
+  actions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+    flexShrink: 0,
+  },
   title: {
     fontSize: 26,
     fontWeight: "800",

@@ -2,13 +2,20 @@ const db = require('../config/database');
 
 class Repair {
   static async create(repairData) {
-    const { vehicle_id, mechanic_id, description, status = 'pending', start_date } = repairData;
+    const {
+      vehicle_id,
+      mechanic_id,
+      description,
+      status = 'pending',
+      start_date,
+      total_cost = 0,
+    } = repairData;
     const query = `
-      INSERT INTO repairs (vehicle_id, mechanic_id, description, status, start_date)
-      VALUES ($1, $2, $3, $4, $5)
+      INSERT INTO repairs (vehicle_id, mechanic_id, description, status, start_date, total_cost)
+      VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *
     `;
-    const values = [vehicle_id, mechanic_id, description, status, start_date];
+    const values = [vehicle_id, mechanic_id, description, status, start_date, total_cost];
     const result = await db.query(query, values);
     return result.rows[0];
   }

@@ -92,7 +92,7 @@ export const storageService = {
   // Nettoyage complet (déconnexion)
   async clearAuth(): Promise<void> {
     try {
-      await AsyncStorage.removeMany([
+      await AsyncStorage.multiRemove([
         STORAGE_KEYS.AUTH_TOKEN,
         STORAGE_KEYS.USER_INFO,
         STORAGE_KEYS.IS_LOGGED_IN,

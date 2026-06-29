@@ -159,6 +159,20 @@ export default function StockPage() {
   return (
     <div className="animate-fadeIn">
 
+      {/* Header avec bouton d'ajout */}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-3xl font-black text-white mb-2">Stock</h1>
+          <p className="text-gray-400">Gérez votre stock de pièces</p>
+        </div>
+        <button
+          onClick={handleAddPart}
+          className="btn btn-primary"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Nouvelle pièce
+        </button>
+      </div>
 
       {/* Filters */}
       {showFilters && (

@@ -50,3 +50,11 @@ Assurez-vous d'avoir PostgreSQL installé et configuré. Créez une base de donn
 - Gestion des pièces détachées
 - Facturation
 - Tableau de bord analytique
+
+## Déploiement
+
+Voir le guide complet dans `DEPLOYMENT.md` pour déployer sur :
+- GitHub
+- Vercel (frontend web)
+- Render (backend + base de données PostgreSQL)
+- Stores mobiles via Expo EAS (Android / iOS)

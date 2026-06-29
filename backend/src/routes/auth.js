@@ -85,7 +85,8 @@ router.post('/login', [
     }
 
     // Vérifier le mot de passe
-    const isMatch = await bcrypt.compare(password, user.password);
+    const hash = user.password_hash || user.password;
+    const isMatch = await bcrypt.compare(password, hash);
     if (!isMatch) {
       return res.status(401).json({ error: 'Email ou mot de passe incorrect.' });
     }
@@ -112,6 +113,11 @@ router.post('/login', [
     console.error(error);
     res.status(500).json({ error: 'Erreur serveur.' });
   }
+});
+
+// Déconnexion (stateless JWT — côté client supprime le token)
+router.post('/logout', auth, async (req, res) => {
+  res.json({ message: 'Déconnexion réussie.' });
 });
 
 // Obtenir le profil utilisateur

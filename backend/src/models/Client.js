@@ -2,13 +2,34 @@ const db = require('../config/database');
 
 class Client {
   static async create(clientData) {
-    const { first_name, last_name, email, phone, address } = clientData;
+    const {
+      first_name,
+      last_name,
+      email,
+      phone,
+      address,
+      company_name,
+      is_professional,
+      notes,
+    } = clientData;
     const query = `
-      INSERT INTO clients (first_name, last_name, email, phone, address)
-      VALUES ($1, $2, $3, $4, $5)
+      INSERT INTO clients (
+        first_name, last_name, email, phone, address,
+        company_name, is_professional, notes
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING *
     `;
-    const values = [first_name, last_name, email, phone, address];
+    const values = [
+      first_name,
+      last_name,
+      email || null,
+      phone || null,
+      address || null,
+      company_name || null,
+      Boolean(is_professional),
+      notes || null,
+    ];
     const result = await db.query(query, values);
     return result.rows[0];
   }
@@ -24,7 +45,8 @@ class Client {
     let values = [];
     
     if (search) {
-      query += ' WHERE first_name ILIKE $1 OR last_name ILIKE $1 OR email ILIKE $1 OR phone ILIKE $1';
+      query +=
+        ' WHERE first_name ILIKE $1 OR last_name ILIKE $1 OR email ILIKE $1 OR phone ILIKE $1 OR COALESCE(company_name, \'\') ILIKE $1';
       values = [`%${search}%`];
     }
     
@@ -34,14 +56,35 @@ class Client {
   }
 
   static async update(id, clientData) {
-    const { first_name, last_name, email, phone, address } = clientData;
+    const {
+      first_name,
+      last_name,
+      email,
+      phone,
+      address,
+      company_name,
+      is_professional,
+      notes,
+    } = clientData;
     const query = `
       UPDATE clients 
-      SET first_name = $1, last_name = $2, email = $3, phone = $4, address = $5
-      WHERE id = $6
+      SET first_name = $1, last_name = $2, email = $3, phone = $4, address = $5,
+          company_name = $6, is_professional = $7, notes = $8,
+          updated_at = CURRENT_TIMESTAMP
+      WHERE id = $9
       RETURNING *
     `;
-    const values = [first_name, last_name, email, phone, address, id];
+    const values = [
+      first_name,
+      last_name,
+      email || null,
+      phone || null,
+      address || null,
+      company_name || null,
+      Boolean(is_professional),
+      notes || null,
+      id,
+    ];
     const result = await db.query(query, values);
     return result.rows[0];
   }

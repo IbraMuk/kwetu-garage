@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { Plus, Search, Edit, Trash2, Users, Phone, Mail, MapPin, Building, Eye, Download, Filter } from 'lucide-react'
-import api from '@/lib/api'
+import api, { unwrapList } from '@/lib/api'
+import { unwrapClientPayload } from '@/lib/unwrapClientResponse'
 import { Client } from '@/types'
 import ClientForm from '@/components/ClientForm'
 import ClientDetail from '@/components/ClientDetail'
@@ -29,7 +30,7 @@ export default function ClientsPage() {
   const fetchClients = async () => {
     try {
       const response = await api.get('/clients')
-      setClients(response.data)
+      setClients(unwrapList<Client>(response.data))
     } catch (error) {
       console.error('Error fetching clients:', error)
     } finally {
@@ -91,17 +92,27 @@ export default function ClientsPage() {
       if (editingClient) {
         // Mise à jour
         const response = await api.put(`/clients/${editingClient.id}`, clientData)
-        setClients(clients.map(c => c.id === editingClient.id ? response.data : c))
+        setClients(clients.map(c => c.id === editingClient.id ? unwrapClientPayload(response.data) : c))
       } else {
         // Création
         const response = await api.post('/clients', clientData)
-        setClients([...clients, response.data])
+        setClients([...clients, unwrapClientPayload(response.data)])
       }
       setShowForm(false)
       setEditingClient(null)
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error saving client:', error)
-      alert('Erreur lors de la sauvegarde du client')
+      let message = 'Erreur lors de la sauvegarde du client'
+      if (error && typeof error === 'object' && 'response' in error) {
+        const res = (error as { response?: { data?: { error?: string; errors?: { msg: string }[] } } }).response
+        if (res?.data?.error) {
+          message = res.data.error
+        } else if (Array.isArray(res?.data?.errors)) {
+          const parts = res.data.errors.map((e) => e.msg).filter(Boolean)
+          if (parts.length) message = parts.join(' · ')
+        }
+      }
+      alert(message)
     }
   }
 

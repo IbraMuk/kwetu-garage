@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { useEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -11,40 +12,26 @@ import {
   View,
 } from "react-native";
 import { Searchbar } from "react-native-paper";
+import { VehicleFormModal } from "../components/EntityFormModals";
 import ScreenHeader from "../components/ScreenHeader";
 import ScreenLayout from "../components/ScreenLayout";
 import { apiService } from "../services/apiService";
 import { Vehicle } from "../types";
+import { formatNumber } from "../utils/apiHelpers";
 import { colors, commonStyles, spacing } from "../theme";
 
-export default function VehiclesScreen({ navigation }: any) {
+export default function VehiclesScreen() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [filteredVehicles, setFilteredVehicles] = useState<Vehicle[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [formVisible, setFormVisible] = useState(false);
 
-  useEffect(() => {
-    loadVehicles();
-  }, []);
-
-  useEffect(() => {
-    const q = searchQuery.toLowerCase();
-    setFilteredVehicles(
-      vehicles.filter(
-        (v) =>
-          v.make.toLowerCase().includes(q) ||
-          v.model.toLowerCase().includes(q) ||
-          v.license_plate.toLowerCase().includes(q),
-      ),
-    );
-  }, [vehicles, searchQuery]);
-
-  const loadVehicles = async () => {
+  const loadVehicles = useCallback(async (silent = false) => {
+    if (!silent) setLoading(true);
     try {
-      setLoading(true);
-      const data = await apiService.getVehicles();
-      setVehicles(data);
+      setVehicles(await apiService.getVehicles());
     } catch (error) {
       Alert.alert(
         "Erreur",
@@ -53,7 +40,25 @@ export default function VehiclesScreen({ navigation }: any) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      void loadVehicles(true);
+    }, [loadVehicles]),
+  );
+
+  useEffect(() => {
+    const q = searchQuery.toLowerCase();
+    setFilteredVehicles(
+      vehicles.filter(
+        (v) =>
+          v.make.toLowerCase().includes(q) ||
+          v.model.toLowerCase().includes(q) ||
+          (v.license_plate ?? "").toLowerCase().includes(q),
+      ),
+    );
+  }, [vehicles, searchQuery]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -69,7 +74,35 @@ export default function VehiclesScreen({ navigation }: any) {
   const showVehicleDetails = (vehicle: Vehicle) => {
     Alert.alert(
       `${vehicle.make} ${vehicle.model}`,
-      `Plaque : ${vehicle.license_plate}\nAnnée : ${vehicle.year}\nKilométrage : ${vehicle.mileage.toLocaleString("fr-FR")} km`,
+      `Plaque : ${vehicle.license_plate}\nAnnée : ${vehicle.year}\nKilométrage : ${formatNumber(vehicle.mileage)} km`,
+      [
+        { text: "Fermer", style: "cancel" },
+        {
+          text: "Supprimer",
+          style: "destructive",
+          onPress: () => {
+            Alert.alert("Confirmer", "Supprimer ce véhicule ?", [
+              { text: "Annuler", style: "cancel" },
+              {
+                text: "Supprimer",
+                style: "destructive",
+                onPress: () =>
+                  void (async () => {
+                    try {
+                      await apiService.deleteVehicle(vehicle.id);
+                      await loadVehicles(true);
+                    } catch (e) {
+                      Alert.alert(
+                        "Erreur",
+                        e instanceof Error ? e.message : "Suppression impossible",
+                      );
+                    }
+                  })(),
+              },
+            ]);
+          },
+        },
+      ],
     );
   };
 
@@ -92,14 +125,12 @@ export default function VehiclesScreen({ navigation }: any) {
       </View>
       <View style={styles.meta}>
         <Text style={commonStyles.listCardSub}>Année {item.year}</Text>
-        <Text style={commonStyles.listCardSub}>
-          {item.mileage.toLocaleString("fr-FR")} km
-        </Text>
+        <Text style={commonStyles.listCardSub}>{formatNumber(item.mileage)} km</Text>
       </View>
     </TouchableOpacity>
   );
 
-  if (loading) {
+  if (loading && vehicles.length === 0) {
     return (
       <ScreenLayout>
         <View style={commonStyles.loadingContainer}>
@@ -115,12 +146,7 @@ export default function VehiclesScreen({ navigation }: any) {
       <ScreenHeader
         title="Véhicules"
         subtitle="Parc automobile"
-        onAdd={() =>
-          Alert.alert(
-            "Bientôt disponible",
-            "L'ajout de véhicules depuis l'app mobile arrive prochainement.",
-          )
-        }
+        onAdd={() => setFormVisible(true)}
       />
       <Searchbar
         placeholder="Rechercher un véhicule..."
@@ -148,6 +174,11 @@ export default function VehiclesScreen({ navigation }: any) {
             </Text>
           </View>
         }
+      />
+      <VehicleFormModal
+        visible={formVisible}
+        onClose={() => setFormVisible(false)}
+        onSaved={() => void loadVehicles(true)}
       />
     </ScreenLayout>
   );
