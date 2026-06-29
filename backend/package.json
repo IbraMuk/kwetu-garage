@@ -5,6 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
+    "start:prod": "node start-prod.js",
     "dev": "nodemon src/index.js",
     "test": "jest"
   },
