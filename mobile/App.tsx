@@ -20,6 +20,7 @@ import LandingScreen from "./src/screens/LandingScreen";
 import LoginScreen from "./src/screens/LoginScreen";
 import OrderScreen from "./src/screens/OrderScreen";
 import PartsScreen from "./src/screens/PartsScreen";
+import AssistanceScreen from "./src/screens/AssistanceScreen";
 import ProfileScreen from "./src/screens/ProfileScreen";
 import RepairsScreen from "./src/screens/RepairsScreen";
 import VehiclesScreen from "./src/screens/VehiclesScreen";
@@ -82,6 +83,7 @@ function MainDrawer() {
       <Drawer.Screen name="Repairs" component={RepairsScreen} options={{ title: "Réparations" }} />
       <Drawer.Screen name="Parts" component={PartsScreen} options={{ title: "Pièces" }} />
       <Drawer.Screen name="Orders" component={OrderScreen} options={{ title: "Commandes" }} />
+      <Drawer.Screen name="Assistance" component={AssistanceScreen} options={{ title: "Dépannage" }} />
       <Drawer.Screen name="Invoices" component={InvoicesScreen} options={{ title: "Factures" }} />
       <Drawer.Screen name="Profile" component={ProfileScreen} options={{ title: "Profil" }} />
     </Drawer.Navigator>

@@ -128,6 +128,23 @@ CREATE INDEX IF NOT EXISTS idx_orders_user_id ON orders(user_id);
 CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
 CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id);
 
+-- Table des demandes de dépannage / remorquage
+CREATE TABLE IF NOT EXISTS assistance_requests (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    client_name VARCHAR(200) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    location TEXT NOT NULL,
+    issue_type VARCHAR(50) NOT NULL,
+    description TEXT,
+    status VARCHAR(50) DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_assistance_user_id ON assistance_requests(user_id);
+CREATE INDEX IF NOT EXISTS idx_assistance_status ON assistance_requests(status);
+
 -- Trigger pour mettre à jour updated_at
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
@@ -145,3 +162,4 @@ CREATE TRIGGER update_repairs_updated_at BEFORE UPDATE ON repairs FOR EACH ROW E
 CREATE TRIGGER update_parts_updated_at BEFORE UPDATE ON parts FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_invoices_updated_at BEFORE UPDATE ON invoices FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_orders_updated_at BEFORE UPDATE ON orders FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_assistance_requests_updated_at BEFORE UPDATE ON assistance_requests FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();

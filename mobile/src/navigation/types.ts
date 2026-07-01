@@ -11,6 +11,7 @@ export type MainTabParamList = {
   Repairs: undefined;
   Parts: undefined;
   Orders: undefined;
+  Assistance: undefined;
   Invoices: undefined;
   Profile: undefined;
 };

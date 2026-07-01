@@ -14,6 +14,7 @@ export default function CustomDrawerContent(props: DrawerContentComponentProps) 
     { id: "Repairs", label: "Réparations", icon: "build" },
     { id: "Parts", label: "Pièces", icon: "cube" },
     { id: "Orders", label: "Commandes", icon: "cart" },
+    { id: "Assistance", label: "Dépannage", icon: "warning" },
     { id: "Invoices", label: "Factures", icon: "document-text" },
     { id: "Profile", label: "Profil", icon: "person" },
   ];
