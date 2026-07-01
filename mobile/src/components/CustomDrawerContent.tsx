@@ -13,6 +13,7 @@ export default function CustomDrawerContent(props: DrawerContentComponentProps) 
     { id: "Vehicles", label: "Véhicules", icon: "car" },
     { id: "Repairs", label: "Réparations", icon: "build" },
     { id: "Parts", label: "Pièces", icon: "cube" },
+    { id: "Orders", label: "Commandes", icon: "cart" },
     { id: "Invoices", label: "Factures", icon: "document-text" },
     { id: "Profile", label: "Profil", icon: "person" },
   ];

@@ -81,7 +81,12 @@ async function query(text, params) {
   }
 }
 
+async function getClient() {
+  return await pool.connect();
+}
+
 module.exports = {
   query,
   pool,
+  getClient,
 };
