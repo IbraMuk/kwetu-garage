@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react'
-import { X, Edit, FileText, User, Calendar, DollarSign, CheckCircle, AlertCircle, Clock, XCircle, Download } from 'lucide-react'
+import { X, Edit, FileText, User, Calendar, DollarSign, CheckCircle, AlertCircle, Clock, XCircle, Download, FileDown } from 'lucide-react'
 import { Invoice, Client } from '@/types'
 import api from '@/lib/api'
 
@@ -104,6 +104,10 @@ export default function InvoiceDetail({ invoice, onClose, onEdit }: InvoiceDetai
     document.body.removeChild(link)
   }
 
+  const handlePdfExport = () => {
+    window.open(`${api.defaults.baseURL}/invoices/${invoice.id}/pdf`, '_blank')
+  }
+
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden animate-slideUp">
@@ -131,6 +135,14 @@ export default function InvoiceDetail({ invoice, onClose, onEdit }: InvoiceDetai
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <button
+              onClick={handlePdfExport}
+              className="btn btn-ghost"
+              title="Télécharger PDF"
+            >
+              <FileDown className="h-4 w-4 mr-2" />
+              PDF
+            </button>
             <button
               onClick={handleExport}
               className="btn btn-ghost"
