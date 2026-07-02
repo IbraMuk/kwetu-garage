@@ -279,12 +279,7 @@ class ApiService {
     if (await this.isDemoMode()) {
       throw new Error("PDF non disponible en mode démo");
     }
-    try {
-      const response = await this.api.get(`/invoices/${id}/pdf`, { responseType: "arraybuffer" });
-      return Buffer.from(response.data, "binary").toString("base64");
-    } catch (error) {
-      throw this.handleError(error);
-    }
+    return `${this.getBaseUrl()}/invoices/${id}/pdf`;
   }
 
   async getParts(): Promise<Part[]> {
