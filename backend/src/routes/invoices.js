@@ -1,13 +1,13 @@
 const express = require("express");
 const { body, validationResult } = require("express-validator");
+const PDFDocument = require("pdfkit");
 const Invoice = require("../models/Invoice");
 const { auth } = require("../middleware/auth");
 
 const router = express.Router();
 
 // Toutes les routes nécessitent une authentification
-// Désactivé temporairement pour le développement
-// router.use(auth);
+router.use(auth);
 
 // Créer une facture
 router.post(
@@ -201,6 +201,74 @@ router.get("/generate/number", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Erreur serveur." });
+  }
+});
+
+// Générer un PDF de facture
+router.get("/:id/pdf", async (req, res) => {
+  try {
+    const invoice = await Invoice.findById(req.params.id);
+    if (!invoice) {
+      return res.status(404).json({ error: "Facture non trouvée." });
+    }
+
+    const doc = new PDFDocument({ margin: 50 });
+    const buffers = [];
+    doc.on("data", (chunk) => buffers.push(chunk));
+    doc.on("end", () => {
+      const pdfData = Buffer.concat(buffers);
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader("Content-Disposition", `inline; filename="${invoice.invoice_number}.pdf"`);
+      res.send(pdfData);
+    });
+
+    // En-tête
+    doc.fontSize(24).text("Kwetu Garage", 50, 50);
+    doc.fontSize(14).fillColor("#666").text("Facture", 50, 85);
+    doc.moveDown();
+
+    // Informations facture
+    doc.fillColor("#000").fontSize(12);
+    doc.text(`N° de facture : ${invoice.invoice_number}`, 50, 130);
+    doc.text(`Date d'émission : ${new Date(invoice.issue_date).toLocaleDateString('fr-FR')}`, 50, 150);
+    doc.text(`Date d'échéance : ${invoice.due_date ? new Date(invoice.due_date).toLocaleDateString('fr-FR') : 'Non définie'}`, 50, 170);
+    doc.text(`Statut : ${invoice.status.toUpperCase()}`, 50, 190);
+
+    // Client
+    doc.moveDown(2);
+    doc.fontSize(14).fillColor("#2563eb").text("Client", 50, 230);
+    doc.fontSize(12).fillColor("#000");
+    const clientName = `${invoice.first_name || ''} ${invoice.last_name || ''}`.trim() || invoice.client_id;
+    doc.text(clientName, 50, 250);
+    if (invoice.email) doc.text(invoice.email, 50, 270);
+    if (invoice.phone) doc.text(invoice.phone, 50, 290);
+
+    // Réparation / Véhicule
+    if (invoice.repair_description || invoice.make || invoice.model) {
+      doc.moveDown(2);
+      doc.fontSize(14).fillColor("#2563eb").text("Détail de la réparation", 50, 330);
+      doc.fontSize(12).fillColor("#000");
+      let y = 350;
+      if (invoice.make || invoice.model) {
+        doc.text(`Véhicule : ${invoice.make || ''} ${invoice.model || ''} ${invoice.license_plate ? `(${invoice.license_plate})` : ''}`, 50, y);
+        y += 20;
+      }
+      if (invoice.repair_description) {
+        doc.text(`Description : ${invoice.repair_description}`, 50, y);
+      }
+    }
+
+    // Montant total
+    doc.moveDown(3);
+    doc.fontSize(16).fillColor("#2563eb").text(`Total : ${parseFloat(invoice.total_amount).toFixed(2)} €`, 50, 450);
+
+    // Pied de page
+    doc.fontSize(10).fillColor("#666").text("Merci pour votre confiance. Kwetu Garage - Votre garage de confiance.", 50, 700);
+
+    doc.end();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Erreur lors de la génération du PDF." });
   }
 });
 

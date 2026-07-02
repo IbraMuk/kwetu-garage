@@ -51,6 +51,10 @@ class ApiService {
     this.onUnauthorized = handler;
   }
 
+  getBaseUrl(): string {
+    return API_BASE_URL;
+  }
+
   private async isDemoMode(): Promise<boolean> {
     const token = await storageService.getToken();
     return isDemoToken(token);
@@ -238,10 +242,46 @@ class ApiService {
     }
   }
 
+  async createInvoice(invoice: Partial<Invoice>): Promise<Invoice> {
+    if (await this.isDemoMode()) {
+      return demoStore.createInvoice(invoice as Invoice);
+    }
+    try {
+      const response = await this.api.post("/invoices", invoice);
+      return unwrapEntity<Invoice>(response.data);
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  async updateInvoice(id: string, invoice: Partial<Invoice>): Promise<Invoice> {
+    if (await this.isDemoMode()) {
+      return demoStore.updateInvoice(id, invoice as Invoice);
+    }
+    try {
+      const response = await this.api.put(`/invoices/${id}`, invoice);
+      return unwrapEntity<Invoice>(response.data);
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
   async deleteInvoice(id: string): Promise<void> {
     if (await this.isDemoMode()) return;
     try {
       await this.api.delete(`/invoices/${id}`);
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  async getInvoicePdf(id: string): Promise<string> {
+    if (await this.isDemoMode()) {
+      throw new Error("PDF non disponible en mode démo");
+    }
+    try {
+      const response = await this.api.get(`/invoices/${id}/pdf`, { responseType: "arraybuffer" });
+      return Buffer.from(response.data, "binary").toString("base64");
     } catch (error) {
       throw this.handleError(error);
     }

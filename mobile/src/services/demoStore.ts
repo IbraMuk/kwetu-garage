@@ -1,4 +1,4 @@
-import { Client, Repair, Vehicle } from "../types";
+import { Client, Invoice, Repair, Vehicle } from "../types";
 
 function newId(): string {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
@@ -75,6 +75,20 @@ let repairs: Repair[] = [
     description: "Freins avant — plaquettes et disques",
     status: "in_progress",
     total_cost: 120000,
+    created_at: now(),
+    updated_at: now(),
+  },
+];
+
+let invoices: Invoice[] = [
+  {
+    id: "i1111111-1111-4111-8111-111111111101",
+    client_id: "c1111111-1111-4111-8111-111111111101",
+    invoice_number: "INV-2026-0001",
+    issue_date: now(),
+    due_date: now(),
+    total_amount: 45000,
+    status: "pending",
     created_at: now(),
     updated_at: now(),
   },
@@ -168,5 +182,32 @@ export const demoStore = {
   },
   deleteRepair: (id: string) => {
     repairs = repairs.filter((r) => r.id !== id);
+  },
+
+  getInvoices: () => [...invoices],
+  createInvoice: (data: Partial<Invoice>): Invoice => {
+    const invoice: Invoice = {
+      id: newId(),
+      client_id: data.client_id ?? "",
+      repair_id: data.repair_id,
+      invoice_number: data.invoice_number ?? `INV-${new Date().getFullYear()}-0001`,
+      issue_date: now(),
+      due_date: data.due_date,
+      total_amount: Number(data.total_amount) || 0,
+      status: data.status ?? "pending",
+      created_at: now(),
+      updated_at: now(),
+    };
+    invoices = [invoice, ...invoices];
+    return invoice;
+  },
+  updateInvoice: (id: string, data: Partial<Invoice>): Invoice => {
+    const idx = invoices.findIndex((i) => i.id === id);
+    if (idx < 0) throw new Error("Facture introuvable");
+    invoices[idx] = { ...invoices[idx], ...data, updated_at: now() };
+    return invoices[idx];
+  },
+  deleteInvoice: (id: string) => {
+    invoices = invoices.filter((i) => i.id !== id);
   },
 };
