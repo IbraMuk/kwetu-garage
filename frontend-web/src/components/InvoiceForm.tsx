@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { X, FileText, User, Calendar, DollarSign, Hash } from 'lucide-react'
 import { Invoice, Client } from '@/types'
+import api, { unwrapList } from '@/lib/api'
 
 interface InvoiceFormProps {
   invoice?: Invoice | null
@@ -50,9 +51,8 @@ export default function InvoiceForm({ invoice, onSubmit, onCancel }: InvoiceForm
 
   const fetchClients = async () => {
     try {
-      const response = await fetch('/api/clients')
-      const data = await response.json()
-      setClients(data)
+      const response = await api.get('/clients')
+      setClients(unwrapList<Client>(response.data))
     } catch (error) {
       console.error('Error fetching clients:', error)
     } finally {
@@ -92,7 +92,16 @@ export default function InvoiceForm({ invoice, onSubmit, onCancel }: InvoiceForm
 
     setIsSubmitting(true)
     try {
-      await onSubmit(formData)
+      const payload: Partial<Invoice> = {
+        client_id: formData.client_id,
+        invoice_number: formData.invoice_number,
+        issue_date: formData.issue_date,
+        total_amount: Number(formData.total_amount) || 0,
+        status: formData.status,
+      }
+      if (formData.repair_id) payload.repair_id = formData.repair_id
+      if (formData.due_date) payload.due_date = formData.due_date
+      await onSubmit(payload)
     } catch (error) {
       console.error('Error submitting form:', error)
     } finally {

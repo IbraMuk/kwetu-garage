@@ -104,8 +104,25 @@ export default function InvoiceDetail({ invoice, onClose, onEdit }: InvoiceDetai
     document.body.removeChild(link)
   }
 
-  const handlePdfExport = () => {
-    window.open(`${api.defaults.baseURL}/invoices/${invoice.id}/pdf`, '_blank')
+  const [pdfLoading, setPdfLoading] = useState(false)
+
+  const handlePdfExport = async () => {
+    setPdfLoading(true)
+    try {
+      const response = await api.get(`/invoices/${invoice.id}/pdf`, {
+        responseType: 'blob',
+      })
+      const blob = new Blob([response.data], { type: 'application/pdf' })
+      const url = URL.createObjectURL(blob)
+      window.open(url, '_blank')
+      // Libère l'URL après ouverture
+      setTimeout(() => URL.revokeObjectURL(url), 60000)
+    } catch (error) {
+      console.error('Error generating PDF:', error)
+      alert('Erreur lors de la génération du PDF')
+    } finally {
+      setPdfLoading(false)
+    }
   }
 
   return (
@@ -138,9 +155,14 @@ export default function InvoiceDetail({ invoice, onClose, onEdit }: InvoiceDetai
             <button
               onClick={handlePdfExport}
               className="btn btn-ghost"
-              title="Télécharger PDF"
+              title="Voir le PDF"
+              disabled={pdfLoading}
             >
-              <FileDown className="h-4 w-4 mr-2" />
+              {pdfLoading ? (
+                <div className="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin mr-2"></div>
+              ) : (
+                <FileDown className="h-4 w-4 mr-2" />
+              )}
               PDF
             </button>
             <button

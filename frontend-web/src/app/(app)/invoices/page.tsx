@@ -2,14 +2,15 @@
 
 import { useEffect, useState } from 'react'
 import { Plus, Search, Edit, Trash2, FileText, Filter, Eye, Calendar, DollarSign, Download, User, CheckCircle, AlertCircle, Clock, XCircle } from 'lucide-react'
-import api from '@/lib/api'
-import { Invoice } from '@/types'
+import api, { unwrapList } from '@/lib/api'
+import { Invoice, Client } from '@/types'
 import InvoiceForm from '@/components/InvoiceForm'
 import InvoiceDetail from '@/components/InvoiceDetail'
 
 export default function InvoicesPage() {
   const [invoices, setInvoices] = useState<Invoice[]>([])
   const [filteredInvoices, setFilteredInvoices] = useState<Invoice[]>([])
+  const [clients, setClients] = useState<Client[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('all')
@@ -21,6 +22,7 @@ export default function InvoicesPage() {
 
   useEffect(() => {
     fetchInvoices()
+    fetchClients()
   }, [])
 
   useEffect(() => {
@@ -30,12 +32,30 @@ export default function InvoicesPage() {
   const fetchInvoices = async () => {
     try {
       const response = await api.get('/invoices')
-      setInvoices(response.data)
+      setInvoices(unwrapList<Invoice>(response.data))
     } catch (error) {
       console.error('Error fetching invoices:', error)
     } finally {
       setLoading(false)
     }
+  }
+
+  const fetchClients = async () => {
+    try {
+      const response = await api.get('/clients')
+      setClients(unwrapList<Client>(response.data))
+    } catch (error) {
+      console.error('Error fetching clients:', error)
+    }
+  }
+
+  const getClientName = (clientId: string) => {
+    const client = clients.find(c => c.id === clientId)
+    if (!client) return '—'
+    const name = `${client.first_name} ${client.last_name}`.trim()
+    return client.is_professional && client.company_name
+      ? `${name} (${client.company_name})`
+      : name
   }
 
   const filterInvoices = () => {
@@ -91,11 +111,13 @@ export default function InvoicesPage() {
       if (editingInvoice) {
         // Update
         const response = await api.put(`/invoices/${editingInvoice.id}`, invoiceData)
-        setInvoices(invoices.map(i => i.id === editingInvoice.id ? response.data : i))
+        const updated = response.data?.invoice ?? response.data
+        setInvoices(invoices.map(i => i.id === editingInvoice.id ? updated : i))
       } else {
         // Create
         const response = await api.post('/invoices', invoiceData)
-        setInvoices([...invoices, response.data])
+        const created = response.data?.invoice ?? response.data
+        setInvoices([...invoices, created])
       }
       setShowForm(false)
       setEditingInvoice(null)
@@ -334,7 +356,7 @@ export default function InvoicesPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-semibold text-gray-300">
-                        Client ID: {invoice.client_id}
+                        {getClientName(invoice.client_id)}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
