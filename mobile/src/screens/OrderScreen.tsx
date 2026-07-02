@@ -16,15 +16,7 @@ import { apiService } from "../services/apiService";
 import { orderService } from "../services/orderService";
 import { colors, spacing } from "../theme";
 import { formatMoney } from "../utils/apiHelpers";
-
-interface Part {
-  id: string;
-  name: string;
-  reference: string;
-  description: string;
-  price: number;
-  stock_quantity: number;
-}
+import { Part } from "../types";
 
 interface CartItem extends Part {
   quantity: number;

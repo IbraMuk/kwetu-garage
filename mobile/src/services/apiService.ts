@@ -248,7 +248,7 @@ class ApiService {
     }
     try {
       const response = await this.api.post("/invoices", invoice);
-      return unwrapEntity<Invoice>(response.data);
+      return unwrapEntity<Invoice>(response.data, ["invoice"]);
     } catch (error) {
       throw this.handleError(error);
     }
@@ -260,7 +260,7 @@ class ApiService {
     }
     try {
       const response = await this.api.put(`/invoices/${id}`, invoice);
-      return unwrapEntity<Invoice>(response.data);
+      return unwrapEntity<Invoice>(response.data, ["invoice"]);
     } catch (error) {
       throw this.handleError(error);
     }
