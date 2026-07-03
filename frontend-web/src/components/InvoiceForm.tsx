@@ -241,7 +241,7 @@ export default function InvoiceForm({ invoice, onSubmit, onCancel }: InvoiceForm
             {/* Montant total */}
             <div className="md:col-span-2">
               <label className="form-label">
-                Montant total (€) <span className="text-red-500">*</span>
+                Montant total ($) <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />

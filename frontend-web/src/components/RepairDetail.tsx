@@ -199,7 +199,7 @@ export default function RepairDetail({ repair, onClose, onEdit }: RepairDetailPr
                         {repair.total_cost.toLocaleString('fr-FR', {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2
-                        })} €
+                        })} $
                       </p>
                     </div>
                   </div>

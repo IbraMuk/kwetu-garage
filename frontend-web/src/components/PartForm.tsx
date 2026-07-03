@@ -143,7 +143,7 @@ export default function PartForm({ part, onSubmit, onCancel }: PartFormProps) {
             {/* Prix unitaire */}
             <div>
               <label className="form-label">
-                Prix unitaire (€) <span className="text-red-500">*</span>
+                Prix unitaire ($) <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />

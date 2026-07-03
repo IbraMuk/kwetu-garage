@@ -77,7 +77,7 @@ export default function PartsScreen() {
 
     Alert.alert(
       part.name,
-      `Référence : ${part.reference || "N/A"}\nPrix : ${formatNumber(part.price)} €\nStock : ${part.stock_quantity}\nStock minimum : ${part.min_stock_level}\nStatut : ${stockStatus}`,
+      `Référence : ${part.reference || "N/A"}\nPrix : ${formatNumber(part.price)} $\nStock : ${part.stock_quantity}\nStock minimum : ${part.min_stock_level}\nStatut : ${stockStatus}`,
       [
         { text: "Fermer", style: "cancel" },
         {
@@ -133,7 +133,7 @@ export default function PartsScreen() {
         </View>
       </View>
       <View style={styles.meta}>
-        <Text style={commonStyles.listCardSub}>{formatNumber(item.price)} €</Text>
+        <Text style={commonStyles.listCardSub}>{formatNumber(item.price)} $</Text>
         <Text style={[commonStyles.listCardSub, { color: getStockStatusColor(item) }]}>
           Stock: {item.stock_quantity}
         </Text>

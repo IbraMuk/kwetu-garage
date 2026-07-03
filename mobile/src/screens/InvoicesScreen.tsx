@@ -160,7 +160,7 @@ export default function InvoicesScreen() {
   const showInvoiceDetails = (invoice: Invoice) => {
     Alert.alert(
       `Facture ${invoice.invoice_number}`,
-      `Client: ${getClientName(invoice.client_id)}\nMontant: ${formatNumber(invoice.total_amount)} €\nStatut: ${getStatusText(invoice.status)}\nDate d'émission: ${new Date(invoice.issue_date).toLocaleDateString('fr-FR')}`,
+      `Client: ${getClientName(invoice.client_id)}\nMontant: ${formatNumber(invoice.total_amount)} $\nStatut: ${getStatusText(invoice.status)}\nDate d'émission: ${new Date(invoice.issue_date).toLocaleDateString('fr-FR')}`,
       [
         { text: "Fermer", style: "cancel" },
         {
@@ -219,7 +219,7 @@ export default function InvoicesScreen() {
         </TouchableOpacity>
       </View>
       <View style={styles.meta}>
-        <Text style={commonStyles.listCardSub}>{formatNumber(item.total_amount)} €</Text>
+        <Text style={commonStyles.listCardSub}>{formatNumber(item.total_amount)} $</Text>
         <Text style={[commonStyles.listCardSub, { color: getStatusColor(item.status) }]}>
           {getStatusText(item.status)}
         </Text>
@@ -312,7 +312,7 @@ export default function InvoicesScreen() {
               ))}
             </View>
 
-            <Text style={styles.label}>Montant total (€)</Text>
+            <Text style={styles.label}>Montant total ($)</Text>
             <TextInput
               style={styles.input}
               placeholder="0.00"

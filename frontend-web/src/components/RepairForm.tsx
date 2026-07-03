@@ -240,7 +240,7 @@ export default function RepairForm({
             {/* Coût total */}
             <div>
               <label className="form-label">
-                Coût total (€) <span className="text-red-500">*</span>
+                Coût total ($) <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />

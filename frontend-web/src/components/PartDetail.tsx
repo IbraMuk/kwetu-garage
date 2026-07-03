@@ -109,7 +109,7 @@ export default function PartDetail({ part, onClose, onEdit }: PartDetailProps) {
                       {part.price.toLocaleString('fr-FR', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2
-                      })} €
+                      })} $
                     </p>
                   </div>
                 </div>

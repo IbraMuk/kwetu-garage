@@ -260,7 +260,7 @@ router.get("/:id/pdf", async (req, res) => {
 
     // Montant total
     doc.moveDown(3);
-    doc.fontSize(16).fillColor("#2563eb").text(`Total : ${parseFloat(invoice.total_amount).toFixed(2)} €`, 50, 450);
+    doc.fontSize(16).fillColor("#2563eb").text(`Total : ${parseFloat(invoice.total_amount).toFixed(2)} $`, 50, 450);
 
     // Pied de page
     doc.fontSize(10).fillColor("#666").text("Merci pour votre confiance. Kwetu Garage - Votre garage de confiance.", 50, 700);

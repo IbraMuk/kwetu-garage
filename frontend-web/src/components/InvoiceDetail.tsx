@@ -223,7 +223,7 @@ export default function InvoiceDetail({ invoice, onClose, onEdit }: InvoiceDetai
                         {invoice.total_amount.toLocaleString('fr-FR', {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2
-                        })} €
+                        })} $
                       </p>
                     </div>
                   </div>

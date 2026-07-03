@@ -288,7 +288,7 @@ export default function RepairsPage() {
                           {repair.total_cost.toLocaleString('fr-FR', {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2
-                          })} €
+                          })} $
                         </span>
                       </div>
                     </div>

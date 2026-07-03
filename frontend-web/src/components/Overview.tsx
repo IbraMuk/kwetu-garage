@@ -61,7 +61,7 @@ const statConfig = [
     iconBg: 'bg-blue-50',
     iconColor: 'text-blue-600',
     borderColor: 'hover:border-blue-200',
-    format: (v: number) => `${v.toLocaleString()} €`
+    format: (v: number) => `${v.toLocaleString()} $`
   }
 ]
 

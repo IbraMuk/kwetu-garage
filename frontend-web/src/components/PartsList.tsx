@@ -143,7 +143,7 @@ export default function PartsList() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-slate-900">
-                      {part.price.toLocaleString()} €
+                      {part.price.toLocaleString()} $
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">

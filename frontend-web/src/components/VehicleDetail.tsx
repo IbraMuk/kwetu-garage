@@ -266,7 +266,7 @@ export default function VehicleDetail({ vehicle, onClose, onEdit }: VehicleDetai
                               {repair.total_cost.toLocaleString('fr-FR', {
                                 minimumFractionDigits: 2,
                                 maximumFractionDigits: 2
-                              })} €
+                              })} $
                             </p>
                           </div>
                         </div>
@@ -288,7 +288,7 @@ export default function VehicleDetail({ vehicle, onClose, onEdit }: VehicleDetai
                           {totalRepairsCost.toLocaleString('fr-FR', {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2
-                          })} €
+                          })} $
                         </p>
                       </div>
                     </div>

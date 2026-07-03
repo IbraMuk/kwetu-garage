@@ -298,7 +298,7 @@ export default function StockPage() {
                         {part.price.toLocaleString('fr-FR', {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2
-                        })} €
+                        })} $
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">

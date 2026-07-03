@@ -247,7 +247,7 @@ export default function ClientDetail({ client, onClose, onEdit }: ClientDetailPr
                               {totalInvoices.toLocaleString('fr-FR', {
                                 minimumFractionDigits: 2,
                                 maximumFractionDigits: 2
-                              })} €
+                              })} $
                             </p>
                           </div>
                           <DollarSign className="h-8 w-8 text-blue-400" />
@@ -262,7 +262,7 @@ export default function ClientDetail({ client, onClose, onEdit }: ClientDetailPr
                               {paidInvoices.toLocaleString('fr-FR', {
                                 minimumFractionDigits: 2,
                                 maximumFractionDigits: 2
-                              })} €
+                              })} $
                             </p>
                           </div>
                           <DollarSign className="h-8 w-8 text-emerald-400" />
@@ -277,7 +277,7 @@ export default function ClientDetail({ client, onClose, onEdit }: ClientDetailPr
                               {(totalInvoices - paidInvoices).toLocaleString('fr-FR', {
                                 minimumFractionDigits: 2,
                                 maximumFractionDigits: 2
-                              })} €
+                              })} $
                             </p>
                           </div>
                           <DollarSign className="h-8 w-8 text-amber-400" />
@@ -361,7 +361,7 @@ export default function ClientDetail({ client, onClose, onEdit }: ClientDetailPr
                                 {invoice.total_amount.toLocaleString('fr-FR', {
                                   minimumFractionDigits: 2,
                                   maximumFractionDigits: 2
-                                })} €
+                                })} $
                               </p>
                             </div>
                           </div>

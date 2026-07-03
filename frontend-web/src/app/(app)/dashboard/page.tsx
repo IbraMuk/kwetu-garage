@@ -28,7 +28,7 @@ export default function DashboardPage() {
     {
       id: "revenue",
       title: "Revenus",
-      value: "€124,563",
+      value: "$124,563",
       change: 12.5,
       trend: "up",
       icon: DollarSign,
@@ -115,7 +115,7 @@ export default function DashboardPage() {
       id: 3,
       type: "payment",
       title: "Paiement reçu",
-      description: "Facture #F2024-0847 - €650",
+      description: "Facture #F2024-0847 - $650",
       time: "Il y a 1h",
       user: "Système",
       avatar: "SY",

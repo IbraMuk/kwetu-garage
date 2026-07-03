@@ -175,7 +175,7 @@ export default function DashboardPro() {
             >
               <div>
                 <p className="kpi-label">Revenu mensuel</p>
-                <p className="kpi-value">€12,450</p>
+                <p className="kpi-value">$12,450</p>
                 <p style={{ fontSize: "0.875rem", opacity: 0.9 }}>
                   +12% vs mois dernier
                 </p>
@@ -299,7 +299,7 @@ export default function DashboardPro() {
               <div style={{ flex: 1 }}>
                 <p style={{ fontWeight: "500" }}>Facture créée</p>
                 <p style={{ fontSize: "0.875rem", color: "#6b7280" }}>
-                  #INV-2024-001 - €450
+                  #INV-2024-001 - $450
                 </p>
               </div>
               <span style={{ fontSize: "0.875rem", color: "#9ca3af" }}>
