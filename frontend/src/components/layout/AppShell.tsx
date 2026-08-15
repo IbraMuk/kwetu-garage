@@ -20,6 +20,7 @@ import {
   X,
   UserCog,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -100,10 +101,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         <div className="flex h-full flex-col">
           <div className="flex h-16 items-center justify-between border-b border-white/10 px-6">
             <div className="flex items-center space-x-3">
-              <img
+              <Image
                 src="/logo.png"
                 alt="Kwetu Garage"
+                width={40}
+                height={40}
                 className="h-10 w-10 rounded-xl object-contain shadow-lg animate-glow"
+                priority
               />
               <div>
                 <h1 className="text-lg font-black bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
@@ -196,6 +200,14 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               >
                 <Menu className="h-6 w-6" />
               </button>
+              <Image
+                src="/logo.png"
+                alt="Kwetu Garage"
+                width={40}
+                height={40}
+                className="hidden h-10 w-10 rounded-xl object-contain shadow-lg sm:block"
+                priority
+              />
               <div className="animate-slideUp">
                 <h1 className="text-2xl font-black tracking-tight text-white md:text-3xl">
                   {pageMeta.title}

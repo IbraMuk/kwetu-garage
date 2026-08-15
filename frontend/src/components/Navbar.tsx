@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { 
   Home, 
@@ -54,7 +55,7 @@ export default function Navbar() {
             {/* Logo */}
             <div className="flex-shrink-0 flex items-center">
               <Link href="/dashboard" className="flex items-center space-x-3">
-                <img src="/logo.png" alt="Kwetu Garage" className="w-10 h-10 rounded-xl object-contain" />
+                <Image src="/logo.png" alt="Kwetu Garage" width={40} height={40} className="w-10 h-10 rounded-xl object-contain" priority />
                 <div>
                   <span className="text-xl font-bold text-slate-100">Kwetu Garage</span>
                   <p className="text-xs text-slate-500">Système de gestion</p>
