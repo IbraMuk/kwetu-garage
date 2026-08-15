@@ -14,7 +14,6 @@ export default function InvoicesPage() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('all')
-  const [showFilters, setShowFilters] = useState(false)
   const [showForm, setShowForm] = useState(false)
   const [showDetail, setShowDetail] = useState(false)
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null)
@@ -241,58 +240,49 @@ export default function InvoicesPage() {
     <div className="animate-fadeIn">
 
       {/* Header avec bouton d'ajout */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-3xl font-black text-white mb-2">Factures</h1>
-          <p className="text-gray-400">Gérez vos factures</p>
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-end">
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            onClick={handleAddInvoice}
+            className="btn btn-primary"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Nouvelle facture
+          </button>
         </div>
-        <button
-          onClick={handleAddInvoice}
-          className="btn btn-primary"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Nouvelle facture
-        </button>
       </div>
 
-      {/* Filters */}
-      {showFilters && (
-        <div className="mb-6 glass-panel !p-4 animate-slideUp">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="form-label">Statut</label>
-              <select
-                value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value)}
-                className="input"
-              >
-                <option value="all">Tous les statuts</option>
-                <option value="pending">En attente</option>
-                <option value="paid">Payée</option>
-                <option value="overdue">En retard</option>
-                <option value="cancelled">Annulée</option>
-              </select>
-            </div>
-            <div className="flex items-end">
-              <div className="text-sm text-gray-400">
-                {filteredInvoices.length} facture{filteredInvoices.length > 1 ? 's' : ''}
-              </div>
+      {/* Filtres */}
+      <div className="mb-6 glass-panel !p-4">
+        <div className="flex flex-col lg:flex-row gap-4">
+          <div className="flex-1">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+              <input
+                type="text"
+                className="input pl-12 pr-4 py-3"
+                placeholder="Rechercher une facture..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Search */}
-      <div className="mb-6">
-        <div className="relative max-w-lg">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
-          <input
-            type="text"
-            className="input pl-12 pr-4 py-3"
-            placeholder="Rechercher une facture..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+          <div className="flex items-center gap-4">
+            <select
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+              className="input"
+            >
+              <option value="all">Tous les statuts</option>
+              <option value="pending">En attente</option>
+              <option value="paid">Payée</option>
+              <option value="overdue">En retard</option>
+              <option value="cancelled">Annulée</option>
+            </select>
+            <div className="text-sm text-gray-400 whitespace-nowrap">
+              {filteredInvoices.length} facture{filteredInvoices.length > 1 ? 's' : ''}
+            </div>
+          </div>
         </div>
       </div>
 
