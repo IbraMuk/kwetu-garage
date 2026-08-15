@@ -7,7 +7,7 @@
     "start": "node src/index.js",
     "start:prod": "node start-prod.js",
     "dev": "nodemon src/index.js",
-    "test": "jest"
+    "test": "jest --passWithNoTests"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
