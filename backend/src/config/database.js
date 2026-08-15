@@ -15,9 +15,27 @@ function shouldUseSsl(url) {
   return false;
 }
 
+function validateDatabaseUrl(url) {
+  if (!url) return false;
+  try {
+    const parsed = new URL(url);
+    if (!parsed.hostname || !parsed.username) return false;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function buildPoolOptions() {
   const url = process.env.DATABASE_URL?.trim();
   if (url) {
+    if (!validateDatabaseUrl(url)) {
+      console.error('[database] DATABASE_URL est défini mais invalide. Valeur reçue (tronquée) :', url.substring(0, 30) + '...');
+      console.error('[database] Format attendu : postgresql://user:password@host:5432/postgres');
+      throw new Error(
+        'DATABASE_URL invalide. Format attendu : postgresql://postgres.<ref>:<mdp>@aws-0-<region>.pooler.supabase.com:5432/postgres'
+      );
+    }
     const opts = {
       connectionString: url,
       max: 20,
