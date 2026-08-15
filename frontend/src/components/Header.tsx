@@ -1,7 +1,6 @@
 'use client'
 
 import { User, LogOut } from 'lucide-react'
-import Image from 'next/image'
 import { useAuth } from '@/contexts/AuthContext'
 
 interface HeaderProps {
@@ -16,13 +15,12 @@ export default function Header({ user }: HeaderProps) {
       <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Image
+            <img
               src="/logo.png"
               alt="Kwetu Garage"
               width={40}
               height={40}
               className="h-10 w-10 rounded-xl object-contain shadow-lg"
-              priority
             />
             <div>
               <h1 className="text-2xl font-bold text-slate-900">
