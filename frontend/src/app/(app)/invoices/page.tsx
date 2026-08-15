@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react'
-import { Plus, Search, Edit, Trash2, FileText, Filter, Eye, Calendar, DollarSign, Download, User, CheckCircle, AlertCircle, Clock, XCircle, FileDown } from 'lucide-react'
+import { Plus, Search, Edit, Trash2, FileText, Eye, Calendar, DollarSign, Download, User, CheckCircle, AlertCircle, Clock, XCircle, FileDown } from 'lucide-react'
 import api, { unwrapList } from '@/lib/api'
 import { Invoice, Client } from '@/types'
 import InvoiceForm from '@/components/InvoiceForm'
@@ -14,7 +14,6 @@ export default function InvoicesPage() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('all')
-  const [showFilters, setShowFilters] = useState(false)
   const [showForm, setShowForm] = useState(false)
   const [showDetail, setShowDetail] = useState(false)
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null)
@@ -256,31 +255,29 @@ export default function InvoicesPage() {
       </div>
 
       {/* Filters */}
-      {showFilters && (
-        <div className="mb-6 glass-panel !p-4 animate-slideUp">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="form-label">Statut</label>
-              <select
-                value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value)}
-                className="input"
-              >
-                <option value="all">Tous les statuts</option>
-                <option value="pending">En attente</option>
-                <option value="paid">Payée</option>
-                <option value="overdue">En retard</option>
-                <option value="cancelled">Annulée</option>
-              </select>
-            </div>
-            <div className="flex items-end">
-              <div className="text-sm text-gray-400">
-                {filteredInvoices.length} facture{filteredInvoices.length > 1 ? 's' : ''}
-              </div>
+      <div className="mb-6 glass-panel !p-4 animate-slideUp">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="form-label">Statut</label>
+            <select
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+              className="input"
+            >
+              <option value="all">Tous les statuts</option>
+              <option value="pending">En attente</option>
+              <option value="paid">Payée</option>
+              <option value="overdue">En retard</option>
+              <option value="cancelled">Annulée</option>
+            </select>
+          </div>
+          <div className="flex items-end">
+            <div className="text-sm text-gray-400">
+              {filteredInvoices.length} facture{filteredInvoices.length > 1 ? 's' : ''}
             </div>
           </div>
         </div>
-      )}
+      </div>
 
       {/* Search */}
       <div className="mb-6">
