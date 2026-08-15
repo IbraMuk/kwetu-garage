@@ -3,6 +3,18 @@ require('dotenv').config();
 
 const PLACEHOLDER_PASSWORD = 'votre_mot_de_passe';
 
+function shouldUseSsl(url) {
+  if (process.env.DATABASE_SSL === 'true') return true;
+  if (process.env.DATABASE_SSL === 'false') return false;
+  if (!url) return false;
+  const lower = url.toLowerCase();
+  if (lower.includes('?sslmode=require') || lower.includes('?sslmode=prefer')) return true;
+  if (lower.includes('ssl=true')) return true;
+  if (lower.includes('.supabase.co') || lower.includes('.supabase.in')) return true;
+  if (lower.includes('.amazonaws.com') || lower.includes('.ondigitalocean.com')) return true;
+  return false;
+}
+
 function buildPoolOptions() {
   const url = process.env.DATABASE_URL?.trim();
   if (url) {
@@ -10,10 +22,13 @@ function buildPoolOptions() {
       connectionString: url,
       max: 20,
       idleTimeoutMillis: 30000,
-      connectionTimeoutMillis: 5000,
+      connectionTimeoutMillis: 10000,
     };
-    if (process.env.DATABASE_SSL === 'true') {
+    if (shouldUseSsl(url)) {
       opts.ssl = { rejectUnauthorized: false };
+      console.log('[database] SSL activé pour DATABASE_URL (Supabase/Cloud).');
+    } else {
+      console.log('[database] SSL désactivé pour DATABASE_URL.');
     }
     return opts;
   }
@@ -36,7 +51,7 @@ function buildPoolOptions() {
     password: process.env.DB_PASSWORD,
     max: 20,
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 5000,
+    connectionTimeoutMillis: 10000,
   };
 }
 
@@ -46,6 +61,16 @@ const pool = new Pool(buildPoolOptions());
  * @param {string} text
  * @param {unknown[]} [params]
  */
+function isTimeoutOrTerminated(err) {
+  const msg = (err && (err.message || err.toString())) || '';
+  return (
+    msg.includes('timeout') ||
+    msg.includes('terminated') ||
+    msg.includes('ECONNRESET') ||
+    err && err.code === 'ETIMEDOUT'
+  );
+}
+
 async function query(text, params) {
   try {
     return await pool.query(text, params);
@@ -74,6 +99,17 @@ async function query(text, params) {
         `PostgreSQL : la base « ${process.env.DB_NAME} » n'existe pas. Créez-la (CREATE DATABASE ...) ou corrigez DB_NAME dans backend/.env.`,
       );
       hint.code = '3D000';
+      hint.cause = err;
+      throw hint;
+    }
+    if (isTimeoutOrTerminated(err)) {
+      const hint = new Error(
+        'PostgreSQL : connexion interrompue / timeout. ' +
+          'Vérifiez : 1) DATABASE_URL est la chaîne Supabase Session pooler (port 5432), ' +
+          '2) DATABASE_SSL=true est défini, ' +
+          '3) le projet Supabase accepte les connexions depuis Render (Network > IPv4 autorisé), ' +
+          '4) le mot de passe est correct.',
+      );
       hint.cause = err;
       throw hint;
     }

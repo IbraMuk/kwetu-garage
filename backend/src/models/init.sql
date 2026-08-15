@@ -11,6 +11,8 @@ CREATE TABLE IF NOT EXISTS users (
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
     role VARCHAR(50) DEFAULT 'mechanic',
+    phone VARCHAR(20),
+    is_active BOOLEAN DEFAULT true,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -25,6 +27,18 @@ CREATE TABLE IF NOT EXISTS clients (
     address TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Table des mécaniciens
+CREATE TABLE IF NOT EXISTS mechanics (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+    speciality VARCHAR(100),
+    hourly_rate DECIMAL(10,2),
+    is_available BOOLEAN DEFAULT true,
+    hire_date DATE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Table des véhicules
@@ -44,6 +58,7 @@ CREATE TABLE IF NOT EXISTS vehicles (
 -- Table des réparations
 CREATE TABLE IF NOT EXISTS repairs (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    client_id UUID REFERENCES clients(id) ON DELETE SET NULL,
     vehicle_id UUID REFERENCES vehicles(id) ON DELETE CASCADE,
     mechanic_id UUID REFERENCES users(id),
     description TEXT NOT NULL,
@@ -145,6 +160,31 @@ CREATE TABLE IF NOT EXISTS assistance_requests (
 CREATE INDEX IF NOT EXISTS idx_assistance_user_id ON assistance_requests(user_id);
 CREATE INDEX IF NOT EXISTS idx_assistance_status ON assistance_requests(status);
 
+-- Table des catégories de réparations
+CREATE TABLE IF NOT EXISTS repair_categories (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(100) NOT NULL,
+    icon VARCHAR(50),
+    display_order INTEGER DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Table des sous-catégories de réparations
+CREATE TABLE IF NOT EXISTS repair_subcategories (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    category_id UUID NOT NULL REFERENCES repair_categories(id) ON DELETE CASCADE,
+    name VARCHAR(200) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_repair_subcategories_category_id ON repair_subcategories(category_id);
+
+-- Ajout des colonnes category_id et subcategory_id à la table repairs
+ALTER TABLE repairs ADD COLUMN IF NOT EXISTS category_id UUID REFERENCES repair_categories(id) ON DELETE SET NULL;
+ALTER TABLE repairs ADD COLUMN IF NOT EXISTS subcategory_id UUID REFERENCES repair_subcategories(id) ON DELETE SET NULL;
+
 -- Trigger pour mettre à jour updated_at
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
@@ -163,3 +203,5 @@ CREATE TRIGGER update_parts_updated_at BEFORE UPDATE ON parts FOR EACH ROW EXECU
 CREATE TRIGGER update_invoices_updated_at BEFORE UPDATE ON invoices FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_orders_updated_at BEFORE UPDATE ON orders FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_assistance_requests_updated_at BEFORE UPDATE ON assistance_requests FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_repair_categories_updated_at BEFORE UPDATE ON repair_categories FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_repair_subcategories_updated_at BEFORE UPDATE ON repair_subcategories FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
