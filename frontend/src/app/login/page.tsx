@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
+import api from "@/lib/api";
 
 interface LoginFormData {
   email: string;
@@ -45,26 +46,14 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      const response = await api.post("/auth/login", data);
+      const { user, token } = response.data;
 
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || "Erreur de connexion");
-      }
-
-      const { user, token } = result;
       login(user, token);
       toast.success("Connexion réussie!");
       router.push("/dashboard");
     } catch (error: any) {
-      toast.error(error.message || "Erreur de connexion");
+      toast.error(error.response?.data?.error || "Erreur de connexion");
     } finally {
       setIsLoading(false);
     }
