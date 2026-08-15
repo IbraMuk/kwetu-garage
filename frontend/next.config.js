@@ -3,6 +3,9 @@ const backendUrl = (process.env.BACKEND_URL || 'http://localhost:3001').replace(
 
 const nextConfig = {
   reactStrictMode: true,
+  turbopack: {
+    root: __dirname,
+  },
   images: {
     remotePatterns: [
       {
