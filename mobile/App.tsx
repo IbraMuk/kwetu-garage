@@ -58,6 +58,7 @@ const navTheme = {
 function MainDrawer() {
   return (
     <Drawer.Navigator
+      id="drawer"
       initialRouteName="Dashboard"
       drawerContent={(props) => <CustomDrawerContent {...props} />}
       screenOptions={{
@@ -68,9 +69,6 @@ function MainDrawer() {
         },
         drawerActiveTintColor: colors.primaryLight,
         drawerInactiveTintColor: colors.text,
-        sceneContainerStyle: {
-          backgroundColor: colors.background,
-        },
       }}
     >
       <Drawer.Screen
@@ -103,7 +101,7 @@ function RootNavigator() {
 
   if (!isAuthenticated || !token) {
     return (
-      <Stack.Navigator key="login" screenOptions={{ headerShown: false }}>
+      <Stack.Navigator id="login" key="login" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Landing" component={LandingScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
       </Stack.Navigator>
@@ -111,7 +109,7 @@ function RootNavigator() {
   }
 
   return (
-    <Stack.Navigator key="main" screenOptions={{ headerShown: false }}>
+    <Stack.Navigator id="main" key="main" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Main" component={MainDrawer} />
     </Stack.Navigator>
   );
