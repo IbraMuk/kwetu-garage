@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from 'react'
-import { Plus, Search, Edit, Trash2, Wrench, Filter, Eye, Calendar, DollarSign, Car, User } from 'lucide-react'
+import { Plus, Search, Edit, Trash2, Wrench, Filter, Eye, Calendar, DollarSign, Car, User, FolderTree } from 'lucide-react'
 import api from '@/lib/api'
-import { Repair } from '@/types'
+import { Repair, RepairCategory } from '@/types'
 import RepairForm from '@/components/RepairForm'
 import RepairDetail from '@/components/RepairDetail'
 
@@ -18,14 +18,17 @@ export default function RepairsPage() {
   const [showDetail, setShowDetail] = useState(false)
   const [selectedRepair, setSelectedRepair] = useState<Repair | null>(null)
   const [editingRepair, setEditingRepair] = useState<Repair | null>(null)
+  const [categories, setCategories] = useState<RepairCategory[]>([])
+  const [selectedCategory, setSelectedCategory] = useState('all')
 
   useEffect(() => {
     fetchRepairs()
+    fetchCategories()
   }, [])
 
   useEffect(() => {
     filterRepairs()
-  }, [repairs, searchTerm, selectedStatus])
+  }, [repairs, searchTerm, selectedStatus, selectedCategory, categories])
 
   const fetchRepairs = async () => {
     try {
@@ -36,6 +39,25 @@ export default function RepairsPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const fetchCategories = async () => {
+    try {
+      const response = await api.get('/repair-categories')
+      setCategories(response.data?.data || response.data || [])
+    } catch (error) {
+      console.error('Error fetching categories:', error)
+    }
+  }
+
+  const getCategoryName = (categoryId?: string) => {
+    if (!categoryId) return null
+    return categories.find((c) => c.id === categoryId)?.name || null
+  }
+
+  const getSubcategoryName = (categoryId?: string, subcategoryId?: string) => {
+    if (!categoryId || !subcategoryId) return null
+    return categories.find((c) => c.id === categoryId)?.subcategories?.find((s) => s.id === subcategoryId)?.name || null
   }
 
   const filterRepairs = () => {
@@ -51,6 +73,11 @@ export default function RepairsPage() {
     // Filter by status
     if (selectedStatus !== 'all') {
       filtered = filtered.filter(repair => repair.status === selectedStatus)
+    }
+
+    // Filter by category
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter(repair => repair.category_id === selectedCategory)
     }
 
     // Sort by date (newest first)
@@ -88,20 +115,31 @@ export default function RepairsPage() {
 
   const handleFormSubmit = async (repairData: Partial<Repair>) => {
     try {
+      // Nettoyer les champs verts pour ne pas envoyer des UUIDs invalides
+      const cleanedData = { ...repairData }
+      if (!cleanedData.client_id) delete cleanedData.client_id
+      if (!cleanedData.mechanic_id) delete cleanedData.mechanic_id
+      if (!cleanedData.category_id) delete cleanedData.category_id
+      if (!cleanedData.subcategory_id) delete cleanedData.subcategory_id
+      if (!cleanedData.start_date) delete cleanedData.start_date
+
       if (editingRepair) {
         // Update
-        const response = await api.put(`/repairs/${editingRepair.id}`, repairData)
-        setRepairs(repairs.map(r => r.id === editingRepair.id ? response.data : r))
+        const response = await api.put(`/repairs/${editingRepair.id}`, cleanedData)
+        const updated = response.data.repair || response.data
+        setRepairs(repairs.map(r => r.id === editingRepair.id ? updated : r))
       } else {
         // Create
-        const response = await api.post('/repairs', repairData)
-        setRepairs([...repairs, response.data])
+        const response = await api.post('/repairs', cleanedData)
+        const created = response.data.repair || response.data
+        setRepairs([...repairs, created])
       }
       setShowForm(false)
       setEditingRepair(null)
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving repair:', error)
-      alert('Erreur lors de la sauvegarde de la réparation')
+      const msg = error?.response?.data?.errors?.map((e: any) => e.msg).join(', ') || error?.response?.data?.error || 'Erreur lors de la sauvegarde'
+      alert(msg)
     }
   }
 
@@ -172,7 +210,7 @@ export default function RepairsPage() {
       {/* Filters */}
       {showFilters && (
         <div className="mb-6 glass-panel !p-4 animate-slideUp">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="form-label">Statut</label>
               <select
@@ -185,6 +223,21 @@ export default function RepairsPage() {
                 <option value="in_progress">En cours</option>
                 <option value="completed">Terminé</option>
                 <option value="cancelled">Annulé</option>
+              </select>
+            </div>
+            <div>
+              <label className="form-label">Catégorie</label>
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="input"
+              >
+                <option value="all">Toutes les catégories</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="flex items-end">
@@ -217,15 +270,15 @@ export default function RepairsPage() {
             <Wrench className="h-10 w-10 text-slate-400" />
           </div>
           <p className="text-gray-300 font-black text-lg mb-2">
-            {searchTerm || selectedStatus !== 'all' ? 'Aucune réparation trouvée' : 'Aucune réparation'}
+            {searchTerm || selectedStatus !== 'all' || selectedCategory !== 'all' ? 'Aucune réparation trouvée' : 'Aucune réparation'}
           </p>
           <p className="text-sm text-gray-400 font-medium mb-4">
-            {searchTerm || selectedStatus !== 'all' 
-              ? 'Essayez de modifier vos filtres de recherche' 
+            {searchTerm || selectedStatus !== 'all' || selectedCategory !== 'all'
+              ? 'Essayez de modifier vos filtres de recherche'
               : 'Créez votre première réparation pour commencer'
             }
           </p>
-          {!searchTerm && selectedStatus === 'all' && (
+          {!searchTerm && selectedStatus === 'all' && selectedCategory === 'all' && (
             <button className="btn btn-primary" onClick={handleAddRepair}>
               <Plus className="h-4 w-4 mr-2" />
               Nouvelle réparation
@@ -259,14 +312,31 @@ export default function RepairsPage() {
                     </div>
 
                     <div className="flex items-center gap-6 text-sm text-gray-300 mb-3">
-                      <div className="flex items-center">
-                        <Car className="h-4 w-4 mr-2 text-slate-400" />
-                        <span>Véhicule ID: {repair.vehicle_id}</span>
-                      </div>
+                      {(repair.client_first_name || repair.client_last_name) && (
+                        <div className="flex items-center">
+                          <User className="h-4 w-4 mr-2 text-slate-400" />
+                          <span>{repair.client_first_name} {repair.client_last_name}</span>
+                        </div>
+                      )}
+                      {(repair.make || repair.model) && (
+                        <div className="flex items-center">
+                          <Car className="h-4 w-4 mr-2 text-slate-400" />
+                          <span>{repair.make} {repair.model}{repair.license_plate ? ` - ${repair.license_plate}` : ''}</span>
+                        </div>
+                      )}
                       {repair.mechanic_id && (
                         <div className="flex items-center">
                           <User className="h-4 w-4 mr-2 text-slate-400" />
                           <span>Mécanicien ID: {repair.mechanic_id}</span>
+                        </div>
+                      )}
+                      {getCategoryName(repair.category_id) && (
+                        <div className="flex items-center">
+                          <FolderTree className="h-4 w-4 mr-2 text-amber-400" />
+                          <span>{getCategoryName(repair.category_id)}</span>
+                          {getSubcategoryName(repair.category_id, repair.subcategory_id) && (
+                            <span className="text-gray-500 ml-1">· {getSubcategoryName(repair.category_id, repair.subcategory_id)}</span>
+                          )}
                         </div>
                       )}
                     </div>

@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from 'react'
-import { X, FileText, User, Calendar, DollarSign, Hash } from 'lucide-react'
-import { Invoice, Client } from '@/types'
+import { X, FileText, User, Calendar, DollarSign, Hash, Wrench } from 'lucide-react'
+import { Invoice, Client, Repair } from '@/types'
 import api, { unwrapList } from '@/lib/api'
 
 interface InvoiceFormProps {
@@ -25,6 +25,7 @@ export default function InvoiceForm({ invoice, onSubmit, onCancel }: InvoiceForm
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [clients, setClients] = useState<Client[]>([])
+  const [repairs, setRepairs] = useState<Repair[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -39,6 +40,9 @@ export default function InvoiceForm({ invoice, onSubmit, onCancel }: InvoiceForm
         total_amount: invoice.total_amount,
         status: invoice.status
       })
+      if (invoice.client_id) {
+        fetchRepairsForClient(invoice.client_id)
+      }
     } else {
       // Generate invoice number
       const today = new Date()
@@ -57,6 +61,35 @@ export default function InvoiceForm({ invoice, onSubmit, onCancel }: InvoiceForm
       console.error('Error fetching clients:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchRepairsForClient = async (clientId: string) => {
+    if (!clientId) {
+      setRepairs([])
+      return
+    }
+    try {
+      const response = await api.get(`/repairs?client_id=${clientId}`)
+      const data = Array.isArray(response.data) ? response.data : (response.data?.data || [])
+      setRepairs(data)
+    } catch (error) {
+      console.error('Error fetching repairs:', error)
+      setRepairs([])
+    }
+  }
+
+  const handleClientChange = (clientId: string) => {
+    handleInputChange('client_id', clientId)
+    handleInputChange('repair_id', '')
+    fetchRepairsForClient(clientId)
+  }
+
+  const handleRepairChange = (repairId: string) => {
+    handleInputChange('repair_id', repairId)
+    const selected = repairs.find(r => r.id === repairId)
+    if (selected && selected.total_cost) {
+      handleInputChange('total_amount', selected.total_cost)
     }
   }
 
@@ -94,10 +127,13 @@ export default function InvoiceForm({ invoice, onSubmit, onCancel }: InvoiceForm
     try {
       const payload: Partial<Invoice> = {
         client_id: formData.client_id,
-        invoice_number: formData.invoice_number,
         issue_date: formData.issue_date,
         total_amount: Number(formData.total_amount) || 0,
         status: formData.status,
+      }
+      // Only send invoice_number for updates, not for new invoices (backend generates it)
+      if (invoice) {
+        payload.invoice_number = formData.invoice_number
       }
       if (formData.repair_id) payload.repair_id = formData.repair_id
       if (formData.due_date) payload.due_date = formData.due_date
@@ -146,7 +182,7 @@ export default function InvoiceForm({ invoice, onSubmit, onCancel }: InvoiceForm
                 <select
                   className={`input pl-12 ${errors.client_id ? 'border-red-300 focus:border-red-500' : ''}`}
                   value={formData.client_id}
-                  onChange={(e) => handleInputChange('client_id', e.target.value)}
+                  onChange={(e) => handleClientChange(e.target.value)}
                   disabled={isSubmitting || loading}
                 >
                   <option value="">Sélectionner un client</option>
@@ -160,6 +196,36 @@ export default function InvoiceForm({ invoice, onSubmit, onCancel }: InvoiceForm
               </div>
               {errors.client_id && (
                 <p className="mt-1 text-sm text-red-600">{errors.client_id}</p>
+              )}
+            </div>
+
+            {/* Réparation liée */}
+            <div className="md:col-span-2">
+              <label className="form-label">Réparation associée</label>
+              <div className="relative">
+                <Wrench className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                <select
+                  className="input pl-12"
+                  value={formData.repair_id}
+                  onChange={(e) => handleRepairChange(e.target.value)}
+                  disabled={isSubmitting || !formData.client_id}
+                >
+                  <option value="">Aucune réparation (facture libre)</option>
+                  {repairs.map(repair => (
+                    <option key={repair.id} value={repair.id}>
+                      {repair.description} — {repair.total_cost.toLocaleString('fr-FR', { minimumFractionDigits: 2 })} $ ({repair.status})
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {formData.client_id && repairs.length === 0 && (
+                <p className="mt-1 text-sm text-slate-400">Aucune réparation trouvée pour ce client.</p>
+              )}
+              {formData.repair_id && (
+                <div className="mt-2 p-3 bg-amber-50 border border-amber-200 rounded-xl text-sm">
+                  <span className="font-semibold text-amber-800">Montant auto-rempli depuis la réparation.</span>{' '}
+                  <span className="text-amber-600">Vous pouvez le modifier si nécessaire.</span>
+                </div>
               )}
             </div>
 

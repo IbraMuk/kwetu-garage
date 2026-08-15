@@ -3,19 +3,22 @@ const db = require('../config/database');
 class Repair {
   static async create(repairData) {
     const {
+      client_id,
       vehicle_id,
       mechanic_id,
       description,
       status = 'pending',
       start_date,
       total_cost = 0,
+      category_id,
+      subcategory_id,
     } = repairData;
     const query = `
-      INSERT INTO repairs (vehicle_id, mechanic_id, description, status, start_date, total_cost)
-      VALUES ($1, $2, $3, $4, $5, $6)
+      INSERT INTO repairs (client_id, vehicle_id, mechanic_id, description, status, start_date, total_cost, category_id, subcategory_id)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
       RETURNING *
     `;
-    const values = [vehicle_id, mechanic_id, description, status, start_date, total_cost];
+    const values = [client_id || null, vehicle_id, mechanic_id || null, description, status, start_date, total_cost, category_id || null, subcategory_id || null];
     const result = await db.query(query, values);
     return result.rows[0];
   }
@@ -24,11 +27,14 @@ class Repair {
     const query = `
       SELECT r.*, v.make, v.model, v.license_plate, 
              c.first_name as client_first_name, c.last_name as client_last_name,
-             u.first_name as mechanic_first_name, u.last_name as mechanic_last_name
+             u.first_name as mechanic_first_name, u.last_name as mechanic_last_name,
+             rc.name as category_name, rsc.name as subcategory_name
       FROM repairs r
-      JOIN vehicles v ON r.vehicle_id = v.id
-      JOIN clients c ON v.client_id = c.id
+      LEFT JOIN vehicles v ON r.vehicle_id = v.id
+      LEFT JOIN clients c ON r.client_id = c.id
       LEFT JOIN users u ON r.mechanic_id = u.id
+      LEFT JOIN repair_categories rc ON r.category_id = rc.id
+      LEFT JOIN repair_subcategories rsc ON r.subcategory_id = rsc.id
       WHERE r.id = $1
     `;
     const result = await db.query(query, [id]);
@@ -39,11 +45,14 @@ class Repair {
     let query = `
       SELECT r.*, v.make, v.model, v.license_plate, 
              c.first_name as client_first_name, c.last_name as client_last_name,
-             u.first_name as mechanic_first_name, u.last_name as mechanic_last_name
+             u.first_name as mechanic_first_name, u.last_name as mechanic_last_name,
+             rc.name as category_name, rsc.name as subcategory_name
       FROM repairs r
-      JOIN vehicles v ON r.vehicle_id = v.id
-      JOIN clients c ON v.client_id = c.id
+      LEFT JOIN vehicles v ON r.vehicle_id = v.id
+      LEFT JOIN clients c ON r.client_id = c.id
       LEFT JOIN users u ON r.mechanic_id = u.id
+      LEFT JOIN repair_categories rc ON r.category_id = rc.id
+      LEFT JOIN repair_subcategories rsc ON r.subcategory_id = rsc.id
     `;
     let values = [];
     let whereClauses = [];
@@ -64,8 +73,13 @@ class Repair {
     }
 
     if (filters.client_id) {
-      whereClauses.push(`v.client_id = $${values.length + 1}`);
+      whereClauses.push(`r.client_id = $${values.length + 1}`);
       values.push(filters.client_id);
+    }
+
+    if (filters.category_id) {
+      whereClauses.push(`r.category_id = $${values.length + 1}`);
+      values.push(filters.category_id);
     }
 
     if (whereClauses.length > 0) {
@@ -78,15 +92,16 @@ class Repair {
   }
 
   static async update(id, repairData) {
-    const { vehicle_id, mechanic_id, description, status, start_date, end_date, total_cost } = repairData;
+    const { client_id, vehicle_id, mechanic_id, description, status, start_date, end_date, total_cost, category_id, subcategory_id } = repairData;
     const query = `
       UPDATE repairs 
-      SET vehicle_id = $1, mechanic_id = $2, description = $3, status = $4, 
-          start_date = $5, end_date = $6, total_cost = $7
-      WHERE id = $8
+      SET client_id = $1, vehicle_id = $2, mechanic_id = $3, description = $4, status = $5, 
+          start_date = $6, end_date = $7, total_cost = $8,
+          category_id = $9, subcategory_id = $10
+      WHERE id = $11
       RETURNING *
     `;
-    const values = [vehicle_id, mechanic_id, description, status, start_date, end_date, total_cost, id];
+    const values = [client_id || null, vehicle_id, mechanic_id || null, description, status, start_date, end_date, total_cost, category_id || null, subcategory_id || null, id];
     const result = await db.query(query, values);
     return result.rows[0];
   }

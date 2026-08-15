@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import type { DrawerNavigationProp } from "@react-navigation/drawer";
 import React, { useCallback, useState } from "react";
 import {
   ActivityIndicator,
@@ -28,7 +28,7 @@ interface DashboardStats {
 }
 
 export default function HomeScreen() {
-  const navigation = useNavigation<BottomTabNavigationProp<MainTabParamList, "Dashboard">>();
+  const navigation = useNavigation<DrawerNavigationProp<MainTabParamList, "Dashboard">>();
   const { user, isDemo } = useAuth();
   const [stats, setStats] = useState<DashboardStats>({
     totalClients: 0,

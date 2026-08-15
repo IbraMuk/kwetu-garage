@@ -11,7 +11,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#0f172a"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.kwetugarage.app"
@@ -27,6 +29,10 @@
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
     },
-    "scheme": "kwetugarage"
+    "scheme": "kwetugarage",
+    "plugins": [
+      "expo-font",
+      "expo-asset"
+    ]
   }
 }

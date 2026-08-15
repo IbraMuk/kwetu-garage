@@ -43,7 +43,11 @@ router.post(
 // Obtenir tous les véhicules
 router.get("/", async (req, res) => {
   try {
-    const { search } = req.query;
+    const { search, client_id } = req.query;
+    if (client_id) {
+      const vehicles = await Vehicle.findByClientId(client_id);
+      return res.json(vehicles);
+    }
     const vehicles = await Vehicle.findAll(search);
     res.json(vehicles);
   } catch (error) {

@@ -14,6 +14,8 @@ const appointmentRoutes = require("./routes/appointments");
 const userRoutes = require("./routes/users");
 const orderRoutes = require("./routes/orders");
 const assistanceRoutes = require("./routes/assistance");
+const repairCategoryRoutes = require("./routes/repairCategories");
+const mechanicRoutes = require("./routes/mechanics");
 
 const db = require("./config/database");
 
@@ -74,6 +76,8 @@ app.use("/api/appointments", appointmentRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/assistance", assistanceRoutes);
+app.use("/api/mechanics", mechanicRoutes);
+app.use("/api/repair-categories", repairCategoryRoutes);
 
 /** Vérifie que l’API tourne et que PostgreSQL répond (utile pour diagnostiquer « erreur à l’ajout client »). */
 app.get("/api/health", async (req, res) => {

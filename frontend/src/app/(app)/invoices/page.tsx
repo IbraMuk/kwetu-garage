@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react'
-import { Plus, Search, Edit, Trash2, FileText, Filter, Eye, Calendar, DollarSign, Download, User, CheckCircle, AlertCircle, Clock, XCircle } from 'lucide-react'
+import { Plus, Search, Edit, Trash2, FileText, Filter, Eye, Calendar, DollarSign, Download, User, CheckCircle, AlertCircle, Clock, XCircle, FileDown } from 'lucide-react'
 import api, { unwrapList } from '@/lib/api'
 import { Invoice, Client } from '@/types'
 import InvoiceForm from '@/components/InvoiceForm'
@@ -19,6 +19,7 @@ export default function InvoicesPage() {
   const [showDetail, setShowDetail] = useState(false)
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null)
   const [editingInvoice, setEditingInvoice] = useState<Invoice | null>(null)
+  const [pdfLoadingId, setPdfLoadingId] = useState<string | null>(null)
 
   useEffect(() => {
     fetchInvoices()
@@ -121,9 +122,10 @@ export default function InvoicesPage() {
       }
       setShowForm(false)
       setEditingInvoice(null)
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving invoice:', error)
-      alert('Erreur lors de la sauvegarde de la facture')
+      const errorMessage = error.response?.data?.error || error.message || 'Erreur inconnue'
+      alert(`Erreur lors de la sauvegarde de la facture: ${errorMessage}`)
     }
   }
 
@@ -176,6 +178,24 @@ export default function InvoicesPage() {
     if (invoice.status === 'paid' || invoice.status === 'cancelled') return false
     if (!invoice.due_date) return false
     return new Date(invoice.due_date) < new Date()
+  }
+
+  const handleViewPdf = async (invoice: Invoice) => {
+    setPdfLoadingId(invoice.id)
+    try {
+      const response = await api.get(`/invoices/${invoice.id}/pdf`, {
+        responseType: 'blob',
+      })
+      const blob = new Blob([response.data], { type: 'application/pdf' })
+      const url = URL.createObjectURL(blob)
+      window.open(url, '_blank')
+      setTimeout(() => URL.revokeObjectURL(url), 60000)
+    } catch (error) {
+      console.error('Error generating PDF:', error)
+      alert('Erreur lors de la génération du PDF')
+    } finally {
+      setPdfLoadingId(null)
+    }
   }
 
   const handleExportInvoice = (invoice: Invoice) => {
@@ -391,9 +411,21 @@ export default function InvoicesPage() {
                     <td className="px-6 py-4 whitespace-nowrap text-right">
                       <div className="flex items-center justify-end gap-1">
                         <button
+                          onClick={() => handleViewPdf(invoice)}
+                          className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 group"
+                          title="Voir le PDF"
+                          disabled={pdfLoadingId === invoice.id}
+                        >
+                          {pdfLoadingId === invoice.id ? (
+                            <div className="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin"></div>
+                          ) : (
+                            <FileDown className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                          )}
+                        </button>
+                        <button
                           onClick={() => handleExportInvoice(invoice)}
                           className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all duration-200 group"
-                          title="Exporter"
+                          title="Exporter en CSV"
                         >
                           <Download className="h-4 w-4 group-hover:scale-110 transition-transform" />
                         </button>

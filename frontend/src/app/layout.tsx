@@ -12,6 +12,11 @@ const inter = Inter({
 export const metadata = {
   title: "Kwetu Garage - Garage Automobile Professionnel à Kinshasa",
   description: "Garage automobile professionnel à Kinshasa. Entretien, réparation, carrosserie, électricité auto et vente de pièces pour toutes marques.",
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({

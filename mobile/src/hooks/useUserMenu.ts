@@ -1,12 +1,12 @@
 import { useNavigation } from "@react-navigation/native";
-import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import type { DrawerNavigationProp } from "@react-navigation/drawer";
 import { Alert } from "react-native";
 import { useAuth } from "../contexts/AuthContext";
 import type { MainTabParamList } from "../navigation/types";
 
 /** Menu compte + déconnexion vers l'écran Login. */
 export function useUserMenu() {
-  const navigation = useNavigation<BottomTabNavigationProp<MainTabParamList>>();
+  const navigation = useNavigation<DrawerNavigationProp<MainTabParamList>>();
   const { user, logout } = useAuth();
 
   const performLogout = async () => {

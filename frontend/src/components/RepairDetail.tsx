@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from 'react'
-import { X, Edit, Wrench, Car, User, Calendar, DollarSign, FileText, Clock } from 'lucide-react'
-import { Repair, Vehicle, Client } from '@/types'
+import { X, Edit, Wrench, Car, User, Calendar, DollarSign, FileText, Clock, FolderTree } from 'lucide-react'
+import { Repair, Vehicle, Client, RepairCategory } from '@/types'
 import api from '@/lib/api'
 
 interface RepairDetailProps {
@@ -14,6 +14,7 @@ interface RepairDetailProps {
 export default function RepairDetail({ repair, onClose, onEdit }: RepairDetailProps) {
   const [vehicle, setVehicle] = useState<Vehicle | null>(null)
   const [client, setClient] = useState<Client | null>(null)
+  const [categories, setCategories] = useState<RepairCategory[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -22,11 +23,13 @@ export default function RepairDetail({ repair, onClose, onEdit }: RepairDetailPr
 
   const fetchRepairDetails = async () => {
     try {
-      // Fetch vehicle information
-      const vehicleResponse = await api.get(`/vehicles/${repair.vehicle_id}`)
+      const [vehicleResponse, catResponse] = await Promise.all([
+        api.get(`/vehicles/${repair.vehicle_id}`),
+        api.get('/repair-categories').catch(() => ({ data: { data: [] } })),
+      ])
       setVehicle(vehicleResponse.data)
+      setCategories(catResponse.data?.data || catResponse.data || [])
 
-      // Fetch client information from vehicle
       if (vehicleResponse.data.client_id) {
         const clientResponse = await api.get(`/clients/${vehicleResponse.data.client_id}`)
         setClient(clientResponse.data)
@@ -138,6 +141,32 @@ export default function RepairDetail({ repair, onClose, onEdit }: RepairDetailPr
                   <p className="text-slate-700">{repair.description}</p>
                 </div>
               </div>
+
+              {/* Catégorie / Sous-catégorie */}
+              {(repair.category_id || repair.subcategory_id) && (
+                <div>
+                  <h3 className="text-lg font-black text-slate-900 mb-3">Catégorie</h3>
+                  <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <div className="flex items-center gap-3">
+                      <FolderTree className="h-5 w-5 text-amber-600" />
+                      <div>
+                        {repair.category_id && (
+                          <p className="font-bold text-slate-900">
+                            {categories.find((c) => c.id === repair.category_id)?.name || '—'}
+                          </p>
+                        )}
+                        {repair.subcategory_id && (
+                          <p className="text-sm text-slate-600">
+                            {categories
+                              .find((c) => c.id === repair.category_id)
+                              ?.subcategories?.find((s) => s.id === repair.subcategory_id)?.name || '—'}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Vehicle Information */}
               {vehicle && (

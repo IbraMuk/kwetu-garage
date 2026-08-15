@@ -15,7 +15,7 @@ class Invoice {
 
   static async findById(id) {
     const query = `
-      SELECT i.*, c.first_name, c.last_name, c.email, c.phone,
+      SELECT i.*, c.first_name, c.last_name, c.email, c.phone, c.address, c.is_professional, c.company_name,
              r.description as repair_description, v.make, v.model, v.license_plate
       FROM invoices i
       JOIN clients c ON i.client_id = c.id

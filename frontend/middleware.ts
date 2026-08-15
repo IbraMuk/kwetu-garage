@@ -18,8 +18,9 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  // Si l'utilisateur est connecté et essaie d'accéder à login/register
-  if (token && isPublicPath) {
+  // Si l'utilisateur est connecté et essaie d'accéder à login/register,
+  // rediriger vers le dashboard. On laisse la page d'accueil (landing) accessible.
+  if (token && (pathname === '/login' || pathname === '/register')) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 

@@ -55,15 +55,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     (async () => {
       try {
-        // Toujours afficher la page de connexion au lancement de l'application en nettoyant la session stockée
-        await storageService.clearAuth();
+        await refreshSession();
       } catch (err) {
-        console.error("Erreur lors du nettoyage de session au démarrage:", err);
+        console.error("Erreur lors de la restauration de session au démarrage:", err);
       } finally {
         setIsLoading(false);
       }
     })();
-  }, []);
+  }, [refreshSession]);
 
   const login = useCallback(async (credentials: LoginCredentials) => {
     const response = await authService.login(credentials);

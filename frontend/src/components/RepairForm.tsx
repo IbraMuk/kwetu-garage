@@ -1,15 +1,17 @@
 "use client";
 
-import { Repair, Vehicle } from "@/types";
+import { Repair, RepairCategory, Vehicle, Client } from "@/types";
 import {
     Car,
     DollarSign,
     FileText,
+    FolderTree,
     User,
     Wrench,
     X
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import api, { unwrapList } from "@/lib/api";
 
 interface RepairFormProps {
   repair?: Repair | null;
@@ -23,44 +25,70 @@ export default function RepairForm({
   onCancel,
 }: RepairFormProps) {
   const [formData, setFormData] = useState({
+    client_id: "",
     vehicle_id: "",
     mechanic_id: "",
     description: "",
     status: "pending" as "pending" | "in_progress" | "completed" | "cancelled",
     total_cost: 0,
     notes: "",
+    category_id: "",
+    subcategory_id: "",
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [clients, setClients] = useState<Client[]>([]);
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [mechanics, setMechanics] = useState<any[]>([]);
+  const [categories, setCategories] = useState<RepairCategory[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchVehicles();
+    fetchClients();
     fetchMechanics();
+    fetchCategories();
     if (repair) {
       setFormData({
+        client_id: repair.client_id || "",
         vehicle_id: repair.vehicle_id,
         mechanic_id: repair.mechanic_id || "",
         description: repair.description,
         status: repair.status,
         total_cost: repair.total_cost,
         notes: repair.notes || "",
+        category_id: repair.category_id || "",
+        subcategory_id: repair.subcategory_id || "",
       });
+      if (repair.client_id) {
+        fetchVehiclesForClient(repair.client_id);
+      }
     }
   }, [repair]);
 
-  const fetchVehicles = async () => {
+  const fetchClients = async () => {
     try {
-      const response = await fetch("/api/vehicles");
-      const data = await response.json();
+      const response = await api.get("/clients");
+      setClients(unwrapList<Client>(response.data));
+    } catch (error) {
+      console.error("Error fetching clients:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchVehiclesForClient = async (clientId: string) => {
+    if (!clientId) {
+      setVehicles([]);
+      return;
+    }
+    try {
+      const response = await api.get(`/vehicles?client_id=${clientId}`);
+      const data = Array.isArray(response.data) ? response.data : (response.data?.data || []);
       setVehicles(data);
     } catch (error) {
       console.error("Error fetching vehicles:", error);
-    } finally {
-      setLoading(false);
+      setVehicles([]);
     }
   };
 
@@ -79,8 +107,32 @@ export default function RepairForm({
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const response = await api.get("/repair-categories");
+      const data = response.data?.data || response.data || [];
+      setCategories(data);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleClientChange = (clientId: string) => {
+    handleInputChange("client_id", clientId);
+    handleInputChange("vehicle_id", "");
+    fetchVehiclesForClient(clientId);
+  };
+
+  const selectedCategory = categories.find((c) => c.id === formData.category_id);
+
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
+
+    if (!formData.client_id) {
+      newErrors.client_id = "Le client est obligatoire";
+    }
 
     if (!formData.vehicle_id) {
       newErrors.vehicle_id = "Le véhicule est obligatoire";
@@ -142,6 +194,33 @@ export default function RepairForm({
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Client */}
+            <div className="md:col-span-2">
+              <label className="form-label">
+                Client <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                <select
+                  className={`input pl-12 ${errors.client_id ? "border-red-300 focus:border-red-500" : ""}`}
+                  value={formData.client_id}
+                  onChange={(e) => handleClientChange(e.target.value)}
+                  disabled={isSubmitting || loading}
+                >
+                  <option value="">Sélectionner un client</option>
+                  {clients.map((client) => (
+                    <option key={client.id} value={client.id}>
+                      {client.first_name} {client.last_name}
+                      {client.is_professional && ` (${client.company_name})`}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {errors.client_id && (
+                <p className="mt-1 text-sm text-red-600">{errors.client_id}</p>
+              )}
+            </div>
+
             {/* Véhicule */}
             <div className="md:col-span-2">
               <label className="form-label">
@@ -155,7 +234,7 @@ export default function RepairForm({
                   onChange={(e) =>
                     handleInputChange("vehicle_id", e.target.value)
                   }
-                  disabled={isSubmitting || loading}
+                  disabled={isSubmitting || !formData.client_id}
                 >
                   <option value="">Sélectionner un véhicule</option>
                   {vehicles.map((vehicle) => (
@@ -168,6 +247,9 @@ export default function RepairForm({
               </div>
               {errors.vehicle_id && (
                 <p className="mt-1 text-sm text-red-600">{errors.vehicle_id}</p>
+              )}
+              {formData.client_id && vehicles.length === 0 && (
+                <p className="mt-1 text-sm text-slate-400">Aucun véhicule trouvé pour ce client.</p>
               )}
             </div>
 
@@ -209,6 +291,53 @@ export default function RepairForm({
                   <option value="in_progress">En cours</option>
                   <option value="completed">Terminé</option>
                   <option value="cancelled">Annulé</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Catégorie */}
+            <div>
+              <label className="form-label">Catégorie</label>
+              <div className="relative">
+                <FolderTree className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                <select
+                  className="input pl-12"
+                  value={formData.category_id}
+                  onChange={(e) => {
+                    handleInputChange("category_id", e.target.value);
+                    setFormData((prev) => ({ ...prev, subcategory_id: "" }));
+                  }}
+                  disabled={isSubmitting}
+                >
+                  <option value="">Sélectionner une catégorie</option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Sous-catégorie */}
+            <div>
+              <label className="form-label">Sous-catégorie</label>
+              <div className="relative">
+                <FolderTree className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                <select
+                  className="input pl-12"
+                  value={formData.subcategory_id}
+                  onChange={(e) =>
+                    handleInputChange("subcategory_id", e.target.value)
+                  }
+                  disabled={isSubmitting || !formData.category_id}
+                >
+                  <option value="">Sélectionner une sous-catégorie</option>
+                  {selectedCategory?.subcategories?.map((sub) => (
+                    <option key={sub.id} value={sub.id}>
+                      {sub.name}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>

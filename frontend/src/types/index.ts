@@ -42,8 +42,23 @@ export interface Vehicle {
   updated_at: string;
 }
 
+export interface RepairSubcategory {
+  id: string;
+  category_id: string;
+  name: string;
+}
+
+export interface RepairCategory {
+  id: string;
+  name: string;
+  icon?: string;
+  display_order: number;
+  subcategories: RepairSubcategory[];
+}
+
 export interface Repair {
   id: string;
+  client_id?: string;
   vehicle_id: string;
   mechanic_id?: string;
   description: string;
@@ -52,6 +67,17 @@ export interface Repair {
   end_date?: string;
   total_cost: number;
   notes?: string;
+  category_id?: string;
+  subcategory_id?: string;
+  client_first_name?: string;
+  client_last_name?: string;
+  mechanic_first_name?: string;
+  mechanic_last_name?: string;
+  make?: string;
+  model?: string;
+  license_plate?: string;
+  category_name?: string;
+  subcategory_name?: string;
   created_at: string;
   updated_at: string;
 }
@@ -86,6 +112,41 @@ export interface Invoice {
   updated_at: string;
 }
 
+export interface OrderItem {
+  id?: string;
+  part_id: string;
+  part_name: string;
+  quantity: number;
+  unit_price: number;
+}
+
+export interface Order {
+  id: string;
+  user_id: string;
+  client_name: string;
+  phone: string;
+  address: string;
+  total_amount: number;
+  notes?: string;
+  status: "pending" | "confirmed" | "shipped" | "delivered" | "cancelled";
+  items: OrderItem[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AssistanceRequest {
+  id: string;
+  user_id: string;
+  client_name: string;
+  phone: string;
+  location: string;
+  issue_type: "breakdown" | "towing";
+  description?: string;
+  status: "pending" | "in_progress" | "resolved" | "cancelled";
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Appointment {
   id: string;
   client_id: string;
@@ -105,6 +166,24 @@ export interface AuthResponse {
   message: string;
   user: User;
   token: string;
+}
+
+export interface Mechanic {
+  id: string;
+  user_id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone?: string;
+  speciality?: string;
+  hourly_rate?: number;
+  is_available: boolean;
+  is_active: boolean;
+  hire_date?: string;
+  role: string;
+  repairs_count?: number;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface ApiResponse<T> {

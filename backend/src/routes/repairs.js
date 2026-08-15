@@ -13,6 +13,7 @@ const router = express.Router();
 router.post(
   "/",
   [
+    body("client_id").optional().isUUID(),
     body("vehicle_id").isUUID(),
     body("mechanic_id").optional().isUUID(),
     body("description").notEmpty().trim(),
@@ -21,6 +22,8 @@ router.post(
       .isIn(["pending", "in_progress", "completed", "cancelled"]),
     body("start_date").optional().isISO8601(),
     body("total_cost").optional().isFloat({ min: 0 }),
+    body("category_id").optional().isUUID(),
+    body("subcategory_id").optional().isUUID(),
   ],
   async (req, res) => {
     try {
@@ -49,6 +52,7 @@ router.get("/", async (req, res) => {
       mechanic_id: req.query.mechanic_id,
       vehicle_id: req.query.vehicle_id,
       client_id: req.query.client_id,
+      category_id: req.query.category_id,
     };
 
     // Remove undefined filters
@@ -82,6 +86,7 @@ router.get("/:id", async (req, res) => {
 router.put(
   "/:id",
   [
+    body("client_id").optional().isUUID(),
     body("vehicle_id").optional().isUUID(),
     body("mechanic_id").optional().isUUID(),
     body("description").optional().notEmpty().trim(),
@@ -91,6 +96,8 @@ router.put(
     body("start_date").optional().isISO8601(),
     body("end_date").optional().isISO8601(),
     body("total_cost").optional().isFloat({ min: 0 }),
+    body("category_id").optional().isUUID(),
+    body("subcategory_id").optional().isUUID(),
   ],
   async (req, res) => {
     try {
