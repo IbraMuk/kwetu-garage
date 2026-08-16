@@ -538,7 +538,113 @@ body {
   backdrop-filter: blur(10px);
 }
 
-/* Ombres professionnelles */
+/* Responsive amélioré — mobile first */
+@media (max-width: 768px) {
+  html {
+    font-size: 15px;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+
+  /* Inputs sans zoom sur iOS */
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+
+  /* Cibles tactiles confortables */
+  button,
+  a,
+  [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Tables scrollables horizontalement */
+  .table-responsive {
+    @apply block w-full overflow-x-auto;
+  }
+
+  .table-responsive table {
+    @apply min-w-max;
+  }
+
+  /* Grille en une colonne sur mobile */
+  .grid-responsive {
+    @apply grid-cols-1;
+  }
+
+  /* Cards moins de padding sur mobile */
+  .card,
+  .glass-panel,
+  .stat-card {
+    @apply p-4;
+  }
+
+  /* Titres plus petits */
+  .heading-1 {
+    @apply text-2xl;
+  }
+
+  .heading-2 {
+    @apply text-2xl;
+  }
+
+  .heading-3 {
+    @apply text-xl;
+  }
+
+  .stat-value {
+    @apply text-2xl;
+  }
+
+  /* Boutons pleine largeur si nécessaire */
+  .btn-mobile-full {
+    @apply w-full;
+  }
+
+  /* Modales pleine largeur sur mobile */
+  .modal-content {
+    @apply mx-4 max-w-full;
+  }
+
+  /* Header compact */
+  .navbar .px-6 {
+    @apply px-3;
+  }
+
+  /* Formulaires avec labels et inputs empilés */
+  .form-label {
+    @apply mb-1;
+  }
+
+  /* Espacements réduits */
+  main {
+    @apply p-3;
+  }
+}
+
+/* Très petits écrans */
+@media (max-width: 480px) {
+  html {
+    font-size: 14px;
+  }
+
+  .heading-1 {
+    @apply text-xl;
+  }
+
+  .heading-2 {
+    @apply text-xl;
+  }
+
+  .stat-value {
+    @apply text-xl;
+  }
+}
 .shadow-sm {
   box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 }
