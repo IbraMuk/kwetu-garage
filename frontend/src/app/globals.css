@@ -1075,4 +1075,28 @@ body {
   @apply border-white/20 bg-white/10 text-gray-300;
 }
 
+/* Le contenu principal (cartes, tableaux, formulaires) reste sur fond clair :
+   on force un texte noir/foncé lisible, sans toucher au sidebar/header sombres. */
+.app-shell > div > main,
+.app-shell main {
+  color: #0f172a;
+}
+
+.app-shell main [class~="text-white"],
+.app-shell main [class~="text-gray-50"],
+.app-shell main [class~="text-gray-100"],
+.app-shell main [class~="text-gray-200"],
+.app-shell main [class~="text-gray-300"],
+.app-shell main [class~="text-slate-50"],
+.app-shell main [class~="text-slate-100"],
+.app-shell main [class~="text-slate-200"],
+.app-shell main [class~="text-slate-300"] {
+  color: #0f172a !important;
+}
+
+.app-shell main [class~="text-gray-400"],
+.app-shell main [class~="text-slate-400"] {
+  color: #475569 !important;
+}
+
 
