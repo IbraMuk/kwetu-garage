@@ -29,20 +29,13 @@ function getCorsOrigins() {
     .map((o) => o.trim())
     .filter(Boolean);
   // Always allow common localhost dev ports
-  const defaultOrigins = [
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "http://localhost:3002",
-    "http://localhost:3003",
-    "http://localhost:8080",
-    "http://localhost:8081",
-    "http://localhost:8082",
-    "http://localhost:8083",
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:3001",
-    "http://127.0.0.1:3002",
-    "http://127.0.0.1:3003",
-  ];
+  const defaultOrigins = [];
+  for (let port = 3000; port <= 3010; port++) {
+    defaultOrigins.push(`http://localhost:${port}`, `http://127.0.0.1:${port}`);
+  }
+  for (let port = 8080; port <= 8083; port++) {
+    defaultOrigins.push(`http://localhost:${port}`, `http://127.0.0.1:${port}`);
+  }
   return [...new Set([...defaultOrigins, ...envOrigins])];
 }
 
