@@ -17,9 +17,12 @@ export default function Logo({
   alt = "Kwetu Garage",
   style,
 }: LogoProps) {
+  const src =
+    typeof logoImg === "string" ? logoImg : (logoImg as { src: string }).src;
+
   return (
     <img
-      src={logoImg as unknown as string}
+      src={src}
       alt={alt}
       width={width}
       height={height}
