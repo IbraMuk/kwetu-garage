@@ -4,6 +4,7 @@ import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import "../styles.css";
+import Logo from "@/components/Logo";
 
 export default function LoginPro() {
   const router = useRouter();
@@ -33,15 +34,14 @@ export default function LoginPro() {
               marginBottom: "1rem",
             }}
           >
-            <img
-              src="/logo.png"
-              alt="Kwetu Garage"
+            <Logo
               style={{
                 width: 60,
                 height: 60,
                 marginRight: "1rem",
                 objectFit: "contain",
               }}
+              alt="Kwetu Garage"
             />
             <div className="brand">Kwetu Garage</div>
           </div>

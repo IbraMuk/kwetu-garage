@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/contexts/AuthContext";
+import Logo from "@/components/Logo";
 import {
   BarChart3,
   Bell,
@@ -100,9 +101,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         <div className="flex h-full flex-col">
           <div className="flex h-16 items-center justify-between border-b border-white/10 px-6">
             <div className="flex items-center space-x-3">
-              <img
-                src="/logo.png"
-                alt="Kwetu Garage"
+              <Logo
                 width={40}
                 height={40}
                 className="h-10 w-10 rounded-xl object-contain shadow-lg animate-glow"
@@ -198,9 +197,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               >
                 <Menu className="h-6 w-6" />
               </button>
-              <img
-                src="/logo.png"
-                alt="Kwetu Garage"
+              <Logo
                 width={40}
                 height={40}
                 className="hidden h-10 w-10 rounded-xl object-contain shadow-lg sm:block"

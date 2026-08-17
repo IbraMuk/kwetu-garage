@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/contexts/AuthContext";
+import Logo from "@/components/Logo";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -20,9 +21,7 @@ export default function LandingNavbar() {
     <nav className="fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-slate-950/80 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         <Link href="/" className="flex items-center gap-3">
-          <img
-            src="/logo.png"
-            alt="Kwetu Garage"
+          <Logo
             width={48}
             height={48}
             className="h-12 w-12 rounded-xl object-contain"

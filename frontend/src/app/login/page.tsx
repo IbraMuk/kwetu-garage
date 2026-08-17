@@ -18,6 +18,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import api from "@/lib/api";
+import Logo from "@/components/Logo";
 
 interface LoginFormData {
   email: string;
@@ -100,7 +101,11 @@ export default function LoginPage() {
         <div className="absolute inset-0 flex items-center justify-center p-12">
           <div className="text-center text-white relative z-10 max-w-2xl mx-auto animate-slideInLeft">
             <div className="mb-12">
-              <img src="/logo.png" alt="Kwetu Garage" className="w-40 h-40 rounded-3xl mb-8 shadow-2xl object-contain animate-glow" />
+              <Logo
+                width={160}
+                height={160}
+                className="w-40 h-40 rounded-3xl mb-8 shadow-2xl object-contain animate-glow"
+              />
               <h1 className="text-7xl font-black mb-6 bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 bg-clip-text text-transparent animate-fadeIn">
                 Kwetu Garage
               </h1>
@@ -192,7 +197,11 @@ export default function LoginPage() {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-12 relative z-10">
         <div className="max-w-md w-full">
           <div className="text-center mb-10 animate-slideUp">
-            <img src="/logo.png" alt="Kwetu Garage" className="w-24 h-24 rounded-3xl mb-6 lg:hidden shadow-2xl object-contain animate-glow" />
+            <Logo
+            width={96}
+            height={96}
+            className="w-24 h-24 rounded-3xl mb-6 lg:hidden shadow-2xl object-contain animate-glow"
+          />
             <h2 className="text-5xl font-black text-white mb-4">Bon retour!</h2>
             <p className="text-gray-300 text-xl font-light">
               Connectez-vous pour gérer votre garage

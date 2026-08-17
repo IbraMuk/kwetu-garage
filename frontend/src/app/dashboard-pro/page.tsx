@@ -1,16 +1,8 @@
 "use client";
 
-import {
-    Bell,
-    Calendar,
-    Car,
-    FileText,
-    Search,
-    Settings,
-    TrendingUp,
-    Users,
-} from "lucide-react";
+import { Bell, Calendar, Car, FileText, Search, Settings, TrendingUp, Users } from "lucide-react";
 import "../styles.css";
+import Logo from "@/components/Logo";
 
 export default function DashboardPro() {
   return (
@@ -19,7 +11,15 @@ export default function DashboardPro() {
       <div className="sidebar">
         <div style={{ padding: "1.5rem", borderBottom: "1px solid #e5e7eb" }}>
           <div style={{ display: "flex", alignItems: "center" }}>
-            <img src="/logo.png" alt="Kwetu Garage" style={{ width: 32, height: 32, marginRight: "0.75rem", objectFit: "contain" }} />
+            <Logo
+              style={{
+                width: 32,
+                height: 32,
+                marginRight: "0.75rem",
+                objectFit: "contain",
+              }}
+              alt="Kwetu Garage"
+            />
             <span style={{ fontSize: "1.25rem", fontWeight: "700" }}>
               Kwetu Garage
             </span>

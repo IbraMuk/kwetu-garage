@@ -8,6 +8,7 @@ import {
     Users,
     Wrench,
 } from "lucide-react";
+import Logo from "@/components/Logo";
 
 export type TabType =
   | "overview"
@@ -37,9 +38,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
       <div className="flex flex-col flex-grow bg-white border-r border-slate-200 shadow-sm">
         <div className="flex items-center px-6 h-16 border-b border-slate-200">
           <div className="flex items-center space-x-3">
-            <img
-              src="/logo.png"
-              alt="Kwetu Garage"
+            <Logo
               width={40}
               height={40}
               className="w-10 h-10 rounded-xl object-contain shadow-lg"

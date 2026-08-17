@@ -27,6 +27,11 @@ const api = axios.create({
   },
 })
 
+// DEBUG: log the actual API baseURL
+if (typeof window !== 'undefined') {
+  console.log('[API] baseURL:', API_URL)
+}
+
 // Intercepteur pour ajouter le token d'authentification
 api.interceptors.request.use(
   (config) => {

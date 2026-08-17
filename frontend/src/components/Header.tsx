@@ -2,6 +2,7 @@
 
 import { User, LogOut } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
+import Logo from '@/components/Logo'
 
 interface HeaderProps {
   user: any
@@ -15,9 +16,7 @@ export default function Header({ user }: HeaderProps) {
       <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img
-              src="/logo.png"
-              alt="Kwetu Garage"
+            <Logo
               width={40}
               height={40}
               className="h-10 w-10 rounded-xl object-contain shadow-lg"
