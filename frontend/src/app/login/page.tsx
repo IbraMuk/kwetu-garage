@@ -13,7 +13,6 @@ import {
     Wrench,
     Zap,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
@@ -26,7 +25,6 @@ interface LoginFormData {
 }
 
 export default function LoginPage() {
-  const router = useRouter();
   const { login, user } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -34,9 +32,9 @@ export default function LoginPage() {
   useEffect(() => {
     // Si l'utilisateur est déjà connecté, rediriger vers le dashboard
     if (user) {
-      router.push("/dashboard");
+      window.location.href = "/dashboard";
     }
-  }, [user, router]);
+  }, [user]);
 
   const {
     register,
@@ -52,7 +50,7 @@ export default function LoginPage() {
 
       login(user, token);
       toast.success("Connexion réussie!");
-      router.push("/dashboard");
+      window.location.href = "/dashboard";
     } catch (error: any) {
       toast.error(error.response?.data?.error || "Erreur de connexion");
     } finally {
