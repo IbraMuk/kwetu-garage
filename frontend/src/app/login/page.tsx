@@ -61,7 +61,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900/10 to-slate-900 flex relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-white flex relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -left-40 w-80 h-80 bg-gradient-to-br from-blue-600/20 to-blue-400/10 rounded-full mix-blend-multiply filter blur-3xl animate-float"></div>
@@ -99,7 +99,7 @@ export default function LoginPage() {
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 via-transparent to-blue-600/5"></div>
         <div className="absolute inset-0 flex items-center justify-center p-12">
-          <div className="text-center text-white relative z-10 max-w-2xl mx-auto animate-slideInLeft">
+          <div className="text-center text-slate-900 relative z-10 max-w-2xl mx-auto animate-slideInLeft">
             <div className="mb-12">
               <Logo
                 width={160}
@@ -109,7 +109,7 @@ export default function LoginPage() {
               <h1 className="text-7xl font-black mb-6 bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 bg-clip-text text-transparent animate-fadeIn">
                 Kwetu Garage
               </h1>
-              <p className="text-3xl text-gray-300 font-light tracking-wide">
+              <p className="text-3xl text-slate-600 font-light tracking-wide">
                 La gestion de garage, réinventée
               </p>
             </div>
@@ -117,62 +117,62 @@ export default function LoginPage() {
             <div className="space-y-12">
               <div className="flex items-center justify-center space-x-16">
                 <div className="text-center group cursor-pointer transform transition-all duration-300 hover:scale-110">
-                  <div className="inline-flex items-center justify-center w-20 h-20 bg-white/10 backdrop-blur-md rounded-3xl mb-4 group-hover:bg-blue-500/20 transition-all duration-300 border border-white/10">
-                    <Car className="h-10 w-10 text-blue-400 group-hover:text-blue-300 transition-colors" />
+                  <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-50 backdrop-blur-md rounded-3xl mb-4 group-hover:bg-blue-100 transition-all duration-300 border border-slate-200">
+                    <Car className="h-10 w-10 text-blue-500 group-hover:text-blue-600 transition-colors" />
                   </div>
-                  <h3 className="font-bold text-gray-200 text-lg">Véhicules</h3>
-                  <p className="text-sm text-gray-400 mt-1">Gestion complète</p>
+                  <h3 className="font-bold text-slate-800 text-lg">Véhicules</h3>
+                  <p className="text-sm text-slate-500 mt-1">Gestion complète</p>
                 </div>
                 <div className="text-center group cursor-pointer transform transition-all duration-300 hover:scale-110">
-                  <div className="inline-flex items-center justify-center w-20 h-20 bg-white/10 backdrop-blur-md rounded-3xl mb-4 group-hover:bg-blue-500/20 transition-all duration-300 border border-white/10">
-                    <Wrench className="h-10 w-10 text-blue-400 group-hover:text-blue-300 transition-colors" />
+                  <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-50 backdrop-blur-md rounded-3xl mb-4 group-hover:bg-blue-100 transition-all duration-300 border border-slate-200">
+                    <Wrench className="h-10 w-10 text-blue-500 group-hover:text-blue-600 transition-colors" />
                   </div>
-                  <h3 className="font-bold text-gray-200 text-lg">
+                  <h3 className="font-bold text-slate-800 text-lg">
                     Réparations
                   </h3>
-                  <p className="text-sm text-gray-400 mt-1">
+                  <p className="text-sm text-slate-500 mt-1">
                     Suivi en temps réel
                   </p>
                 </div>
                 <div className="text-center group cursor-pointer transform transition-all duration-300 hover:scale-110">
-                  <div className="inline-flex items-center justify-center w-20 h-20 bg-white/10 backdrop-blur-md rounded-3xl mb-4 group-hover:bg-blue-500/20 transition-all duration-300 border border-white/10">
-                    <Shield className="h-10 w-10 text-blue-400 group-hover:text-blue-300 transition-colors" />
+                  <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-50 backdrop-blur-md rounded-3xl mb-4 group-hover:bg-blue-100 transition-all duration-300 border border-slate-200">
+                    <Shield className="h-10 w-10 text-blue-500 group-hover:text-blue-600 transition-colors" />
                   </div>
-                  <h3 className="font-bold text-gray-200 text-lg">Sécurité</h3>
-                  <p className="text-sm text-gray-400 mt-1">
+                  <h3 className="font-bold text-slate-800 text-lg">Sécurité</h3>
+                  <p className="text-sm text-slate-500 mt-1">
                     Données protégées
                   </p>
                 </div>
               </div>
 
               <div className="flex items-center justify-center space-x-12 pt-8">
-                <div className="flex items-center text-gray-300 group">
-                  <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center mr-3 group-hover:bg-emerald-500/30 transition-colors">
-                    <CheckCircle className="h-5 w-5 text-emerald-400" />
+                <div className="flex items-center text-slate-700 group">
+                  <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center mr-3 group-hover:bg-emerald-200 transition-colors">
+                    <CheckCircle className="h-5 w-5 text-emerald-600" />
                   </div>
                   <div>
                     <p className="text-sm font-semibold">Rapide</p>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-slate-500">
                       Performance optimale
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center text-gray-300 group">
-                  <div className="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center mr-3 group-hover:bg-yellow-500/30 transition-colors">
-                    <Zap className="h-5 w-5 text-yellow-400" />
+                <div className="flex items-center text-slate-700 group">
+                  <div className="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center mr-3 group-hover:bg-yellow-200 transition-colors">
+                    <Zap className="h-5 w-5 text-yellow-600" />
                   </div>
                   <div>
                     <p className="text-sm font-semibold">Efficace</p>
-                    <p className="text-xs text-gray-400">Automatisation</p>
+                    <p className="text-xs text-slate-500">Automatisation</p>
                   </div>
                 </div>
-                <div className="flex items-center text-gray-300 group">
-                  <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center mr-3 group-hover:bg-blue-500/30 transition-colors">
-                    <Settings className="h-5 w-5 text-blue-400" />
+                <div className="flex items-center text-slate-700 group">
+                  <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3 group-hover:bg-blue-200 transition-colors">
+                    <Settings className="h-5 w-5 text-blue-600" />
                   </div>
                   <div>
                     <p className="text-sm font-semibold">Complet</p>
-                    <p className="text-xs text-gray-400">Tout-en-un</p>
+                    <p className="text-xs text-slate-500">Tout-en-un</p>
                   </div>
                 </div>
               </div>
@@ -202,15 +202,15 @@ export default function LoginPage() {
             height={96}
             className="w-24 h-24 rounded-3xl mb-6 lg:hidden shadow-2xl object-contain animate-glow"
           />
-            <h2 className="text-5xl font-black text-white mb-4">Bon retour!</h2>
-            <p className="text-gray-300 text-xl font-light">
+            <h2 className="text-5xl font-black text-slate-900 mb-4">Bon retour!</h2>
+            <p className="text-slate-600 text-xl font-light">
               Connectez-vous pour gérer votre garage
             </p>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-2xl rounded-3xl p-8 shadow-2xl border border-white/20 relative overflow-hidden animate-scaleIn">
+          <div className="bg-white rounded-3xl p-8 shadow-2xl border border-slate-200 relative overflow-hidden animate-scaleIn">
             {/* Gradient border effect */}
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-blue-500/10 rounded-3xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-transparent to-blue-50/50 rounded-3xl"></div>
 
             <form
               className="space-y-8 relative z-10"
@@ -220,7 +220,7 @@ export default function LoginPage() {
                 <div>
                   <label
                     htmlFor="email"
-                    className="block text-sm font-bold text-gray-200 mb-3"
+                    className="block text-sm font-bold text-slate-700 mb-3"
                   >
                     Adresse email
                   </label>
@@ -238,7 +238,7 @@ export default function LoginPage() {
                       })}
                       type="email"
                       autoComplete="email"
-                      className="appearance-none relative block w-full px-4 py-4 pl-12 bg-white/10 backdrop-blur border border-white/20 placeholder-gray-400 text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 sm:text-sm transition-all group-hover:bg-white/15"
+                      className="appearance-none relative block w-full px-4 py-4 pl-12 bg-white border border-slate-300 placeholder-slate-400 text-slate-900 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 sm:text-sm transition-all group-hover:border-slate-400"
                       placeholder="admin@kwetugarage.com"
                     />
                     <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/0 to-blue-500/0 group-focus-within:from-blue-500/10 group-focus-within:to-blue-500/5 transition-all pointer-events-none"></div>
@@ -254,7 +254,7 @@ export default function LoginPage() {
                 <div>
                   <label
                     htmlFor="password"
-                    className="block text-sm font-bold text-gray-200 mb-3"
+                    className="block text-sm font-bold text-slate-700 mb-3"
                   >
                     Mot de passe
                   </label>
@@ -268,7 +268,7 @@ export default function LoginPage() {
                       })}
                       type={showPassword ? "text" : "password"}
                       autoComplete="current-password"
-                      className="appearance-none relative block w-full px-4 py-4 pl-12 pr-12 bg-white/10 backdrop-blur border border-white/20 placeholder-gray-400 text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 sm:text-sm transition-all group-hover:bg-white/15"
+                      className="appearance-none relative block w-full px-4 py-4 pl-12 pr-12 bg-white border border-slate-300 placeholder-slate-400 text-slate-900 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 sm:text-sm transition-all group-hover:border-slate-400"
                       placeholder="••••••••"
                     />
                     <button
@@ -299,11 +299,11 @@ export default function LoginPage() {
                     id="remember-me"
                     name="remember-me"
                     type="checkbox"
-                    className="h-5 w-5 text-blue-500 focus:ring-blue-500/50 border-white/30 rounded bg-white/10"
+                    className="h-5 w-5 text-blue-500 focus:ring-blue-500/50 border-slate-300 rounded bg-white"
                   />
                   <label
                     htmlFor="remember-me"
-                    className="ml-3 block text-sm text-gray-200"
+                    className="ml-3 block text-sm text-slate-700"
                   >
                     Se souvenir
                   </label>
@@ -339,8 +339,8 @@ export default function LoginPage() {
                 </button>
               </div>
 
-              <div className="text-center pt-8 border-t border-white/20">
-                <span className="text-sm text-gray-300">
+              <div className="text-center pt-8 border-t border-slate-200">
+                <span className="text-sm text-slate-600">
                   Nouveau sur Kwetu Garage?{" "}
                   <a
                     href="/register"
